@@ -1,0 +1,26 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1b2433"/>
+      <stop offset="55%" stop-color="#2a3344"/>
+      <stop offset="100%" stop-color="#101820"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c4a484"/>
+      <stop offset="100%" stop-color="#a98467"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#sky)"/>
+  <circle cx="120" cy="180" r="4" fill="#9e8857" fill-opacity="0.5"/>
+  <circle cx="680" cy="140" r="3" fill="#ffffff" fill-opacity="0.35"/>
+  <circle cx="720" cy="260" r="2" fill="#ffffff" fill-opacity="0.25"/>
+  <rect x="0" y="640" width="800" height="360" fill="#0f141c"/>
+  <ellipse cx="250" cy="780" rx="180" ry="40" fill="#1a2230"/>
+  <ellipse cx="560" cy="820" rx="160" ry="36" fill="#182030"/>
+  <path d="M150 1000C180 760 280 650 400 650C520 650 620 760 650 1000" fill="#243041"/>
+  <path d="M250 1000C270 820 320 730 400 730C480 730 530 820 550 1000" fill="#314257"/>
+  <circle cx="400" cy="390" r="150" fill="url(#skin)"/>
+  <path d="M270 330C300 250 360 220 400 220C460 220 530 270 540 360C500 300 430 290 400 300C360 310 300 330 270 330Z" fill="#1d1a17"/>
+  <rect x="34" y="34" width="3" height="70" fill="#9e8857"/>
+  <rect x="763" y="34" width="3" height="70" fill="#9e8857"/>
+</svg>

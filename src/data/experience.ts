@@ -7,24 +7,28 @@ export type ExperienceItem = {
 
 export const experience: ExperienceItem[] = [
   {
-    company: "Studio Current",
-    role: "Senior Frontend Developer",
-    period: "2024 - Present",
-    summary:
-      "Leading premium marketing sites and product experiences with a strong focus on reusable architecture, performance, and motion design.",
+    company: "Pixel Foundry",
+    role: "Frontend Developer",
+    period: "Feb 2022 - Jul 2022",
+    summary: '"Great attention to detail and a very good team member."',
   },
   {
-    company: "Northbound Labs",
-    role: "Frontend Engineer",
-    period: "2022 - 2024",
-    summary:
-      "Built responsive product interfaces, design systems, and internal dashboards while collaborating closely with design and product teams.",
+    company: "Harbor Labs",
+    role: "Web Developer",
+    period: "Aug 2022 - Dec 2022",
+    summary: '"It was a great help in improving the views of our service page, great job!"',
   },
   {
-    company: "Independent Projects",
-    role: "Freelance Developer",
-    period: "2020 - 2022",
+    company: "North Exchange",
+    role: "UI Engineer",
+    period: "Jan 2023 - Jun 2023",
+    summary: '"Vivek was very proactive with the design of our new website."',
+  },
+  {
+    company: "Fieldline Services",
+    role: "Fullstack Developer",
+    period: "Jun 2023 - Dec 2025",
     summary:
-      "Delivered polished portfolio sites, launch pages, and MVP frontends for founders who needed fast execution without sacrificing quality.",
+      '"Vivek was a dedicated and hard worker for a very long time and I appreciate the work he did for me!"',
   },
 ];

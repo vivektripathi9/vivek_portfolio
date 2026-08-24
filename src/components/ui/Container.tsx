@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ElementType, ReactNode } from "react";
 
 type ContainerProps = {
   children: ReactNode;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: ElementType;
 };
 
 export function Container({

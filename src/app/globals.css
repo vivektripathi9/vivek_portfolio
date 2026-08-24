@@ -1,43 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #070b14;
-  --background-elevated: #0c1220;
-  --surface: rgba(14, 22, 38, 0.74);
-  --surface-strong: rgba(20, 31, 54, 0.92);
-  --foreground: #f5f7fb;
-  --muted-foreground: #9eabc5;
-  --muted: #11192b;
-  --border: rgba(172, 189, 219, 0.16);
-  --accent: #8fb2ff;
-  --accent-strong: #c3d5ff;
-  --accent-soft: rgba(143, 178, 255, 0.14);
-  --success: #a8ffcf;
-  --shadow: 0 24px 80px rgba(2, 6, 23, 0.4);
-  --radius-sm: 0.75rem;
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
-  --radius-xl: 2rem;
-  --container-max: 80rem;
-  --section-space: clamp(4.5rem, 8vw, 8rem);
-  --content-space: clamp(1.25rem, 2.4vw, 2rem);
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --muted-foreground: rgba(10, 10, 10, 0.82);
+  --muted-soft: rgba(10, 10, 10, 0.68);
+  --accent: #9e8857;
+  --accent-strong: #7a683f;
+  --accent-blue: #576d9e;
+  --border: rgba(122, 104, 63, 0.45);
+  --surface: rgba(10, 10, 10, 0.03);
+  --container-max: 72rem;
+  --section-space: clamp(4rem, 10vw, 8rem);
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-background-elevated: var(--background-elevated);
-  --color-surface: var(--surface);
-  --color-surface-strong: var(--surface-strong);
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
+  --color-muted-soft: var(--muted-soft);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
-  --color-accent-soft: var(--accent-soft);
-  --color-success: var(--success);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent-blue: var(--accent-blue);
+  --color-border: var(--border);
+  --color-surface: var(--surface);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-monoton);
 }
 
 * {
@@ -52,17 +40,10 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at top, rgba(143, 178, 255, 0.14), transparent 32%),
-    linear-gradient(180deg, #0a1020 0%, #070b14 38%, #060911 100%);
+  background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Inter, sans-serif;
   text-rendering: optimizeLegibility;
-}
-
-::selection {
-  background: rgba(143, 178, 255, 0.24);
-  color: var(--foreground);
 }
 
 a {
@@ -70,14 +51,14 @@ a {
   text-decoration: none;
 }
 
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
 img {
   max-width: 100%;
   height: auto;
+}
+
+::selection {
+  background: rgba(158, 136, 87, 0.28);
+  color: #111111;
 }
 
 :focus-visible {
@@ -109,147 +90,167 @@ img {
     padding-block: var(--section-space);
   }
 
-  .panel {
-    border: 1px solid var(--border);
-    background: var(--surface);
-    backdrop-filter: blur(16px);
-    box-shadow: var(--shadow);
-  }
-
   .type-display-xl {
-    font-size: clamp(3.5rem, 10vw, 8rem);
-    line-height: 0.92;
-    letter-spacing: -0.06em;
-    font-weight: 600;
+    font-family: var(--font-monoton), Monoton, sans-serif;
+    font-size: clamp(2.4rem, 10vw, 6.5rem);
+    line-height: 1.05;
+    letter-spacing: 0.04em;
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
   .type-display-lg {
-    font-size: clamp(3rem, 7.2vw, 6rem);
-    line-height: 0.95;
-    letter-spacing: -0.05em;
-    font-weight: 600;
+    font-family: var(--font-monoton), Monoton, sans-serif;
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
   .type-display-md {
-    font-size: clamp(2.4rem, 5.6vw, 4.5rem);
-    line-height: 0.98;
-    letter-spacing: -0.045em;
-    font-weight: 600;
+    font-family: var(--font-monoton), Monoton, sans-serif;
+    font-size: clamp(1.6rem, 4.8vw, 3rem);
+    line-height: 1.15;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
   .type-display-sm {
-    font-size: clamp(2rem, 4.6vw, 3.5rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-    font-weight: 600;
+    font-family: var(--font-monoton), Monoton, sans-serif;
+    font-size: clamp(1.25rem, 3.2vw, 1.75rem);
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
   .type-h1 {
-    font-size: clamp(2.1rem, 4.5vw, 3.5rem);
-    line-height: 1.04;
-    letter-spacing: -0.04em;
-    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 700;
   }
 
   .type-h2 {
-    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
-    line-height: 1.08;
-    letter-spacing: -0.035em;
-    font-weight: 600;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 
   .type-h3 {
-    font-size: clamp(1.35rem, 2.6vw, 2rem);
-    line-height: 1.12;
-    letter-spacing: -0.03em;
-    font-weight: 600;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    line-height: 1.2;
+    font-weight: 700;
   }
 
   .type-h4 {
-    font-size: clamp(1.15rem, 2vw, 1.5rem);
-    line-height: 1.18;
-    letter-spacing: -0.025em;
-    font-weight: 600;
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    line-height: 1.25;
+    font-weight: 700;
   }
 
   .type-h5 {
-    font-size: clamp(1rem, 1.6vw, 1.18rem);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    font-weight: 600;
+    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    line-height: 1.3;
+    font-weight: 700;
   }
 
   .type-h6 {
-    font-size: clamp(0.92rem, 1.2vw, 1rem);
-    line-height: 1.25;
-    letter-spacing: -0.01em;
+    font-size: 0.95rem;
+    line-height: 1.35;
     font-weight: 600;
   }
 
+  .type-display-xl,
+  .type-display-lg,
+  .type-display-md,
+  .type-display-sm {
+    color: var(--foreground);
+  }
+
+  .type-h1,
+  .type-h2,
+  .type-h3,
+  .type-h4,
+  .type-h5,
+  .type-h6 {
+    color: var(--foreground);
+  }
+
   .type-body-lg {
-    font-size: clamp(1.02rem, 1.45vw, 1.18rem);
-    line-height: 1.8;
-    letter-spacing: -0.015em;
+    font-size: clamp(0.98rem, 1.35vw, 1.125rem);
+    line-height: 1.75;
     color: var(--muted-foreground);
   }
 
   .type-body-md {
-    font-size: clamp(0.98rem, 1.2vw, 1.05rem);
-    line-height: 1.72;
-    letter-spacing: -0.012em;
+    font-size: clamp(0.92rem, 1.1vw, 1rem);
+    line-height: 1.7;
     color: var(--muted-foreground);
   }
 
   .type-body-sm {
-    font-size: clamp(0.88rem, 1vw, 0.96rem);
-    line-height: 1.65;
-    letter-spacing: -0.01em;
-    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--muted-soft);
   }
 
   .type-eyebrow {
-    font-size: 0.78rem;
-    line-height: 1.3;
-    letter-spacing: 0.22em;
+    font-family: var(--font-monoton), Monoton, sans-serif;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    line-height: 1.2;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    font-weight: 500;
-    color: var(--accent-strong);
+    color: var(--foreground);
   }
 
   .type-caption {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     line-height: 1.5;
-    letter-spacing: 0.02em;
-    color: var(--muted-foreground);
+    letter-spacing: 0.04em;
+    color: var(--muted-soft);
   }
 
   .type-small {
     font-size: 0.75rem;
     line-height: 1.4;
-    letter-spacing: 0.01em;
-    color: var(--muted-foreground);
+    color: var(--muted-soft);
   }
 
   .type-nav {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     line-height: 1.2;
-    letter-spacing: -0.01em;
     font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--foreground);
   }
 
   .type-button {
-    font-size: 0.92rem;
+    font-size: clamp(0.95rem, 1.2vw, 1.15rem);
     line-height: 1.2;
-    letter-spacing: -0.01em;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .role-label {
+    font-family: var(--font-inter), Inter, sans-serif;
+    font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: var(--accent);
     font-weight: 600;
   }
 
-  .grid-auto-fit {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  .text-accent {
+    color: var(--accent-strong);
   }
 
-  .text-balance {
-    text-wrap: balance;
+  .gold-line {
+    background: linear-gradient(180deg, transparent, var(--accent), transparent);
   }
 }

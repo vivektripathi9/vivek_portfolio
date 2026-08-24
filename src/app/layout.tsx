@@ -1,39 +1,40 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Monoton } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const monoton = Monoton({
+  variable: "--font-monoton",
+  weight: "400",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://portfolio-placeholder.vercel.app"),
   title: {
-    default: "Aarav Mehta | Creative Developer Portfolio",
-    template: "%s | Aarav Mehta",
+    default: "Vivek Tripathi • Front-End Developer",
+    template: "%s | Vivek Tripathi",
   },
   description:
-    "Modern, premium, animation-rich portfolio website template built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.",
+    "Portfolio of Vivek Tripathi — Front-End Developer building high-performance, scalable web experiences.",
   openGraph: {
-    title: "Aarav Mehta | Creative Developer Portfolio",
+    title: "Vivek Tripathi • Front-End Developer",
     description:
-      "A polished developer portfolio template with premium presentation, selected work, services, and contact sections.",
+      "Portfolio of Vivek Tripathi with selected work, experience, and contact details.",
     url: "https://portfolio-placeholder.vercel.app",
-    siteName: "Aarav Mehta Portfolio",
+    siteName: "Vivek Tripathi Portfolio",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aarav Mehta | Creative Developer Portfolio",
+    title: "Vivek Tripathi • Front-End Developer",
     description:
-      "Premium personal portfolio template built for modern frontend developers.",
+      "Portfolio of Vivek Tripathi — Front-End Developer.",
   },
 };
 
@@ -41,9 +42,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${monoton.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full bg-[var(--background)] text-[var(--foreground)]">
+        {children}
+      </body>
     </html>
   );
 }

@@ -4,19 +4,10 @@ import { siteConfig } from "@/data/site";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/8 py-8">
-      <Container className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-1">
-          <Typography variant="nav" className="text-[var(--foreground)]">
-            {siteConfig.name}
-          </Typography>
-          <Typography variant="body-sm">
-            Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
-          </Typography>
-        </div>
-
-        <Typography variant="caption">
-          Replace this placeholder content with your real profile, projects, and contact details.
+    <footer className="border-t border-white/10 bg-black py-10 text-white/75 md:py-12">
+      <Container>
+        <Typography variant="caption" className="text-center !text-white/75">
+          Copyright © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
         </Typography>
       </Container>
     </footer>

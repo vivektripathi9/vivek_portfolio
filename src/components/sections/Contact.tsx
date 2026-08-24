@@ -1,47 +1,48 @@
-import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
+"use client";
+
+import { motion } from "framer-motion";
+
+import { useOutro } from "@/components/motion/OutroZone";
 import { Reveal } from "@/components/motion/Reveal";
-import { Typography } from "@/components/ui/Typography";
+import { Container } from "@/components/ui/Container";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/data/site";
 
 export function Contact() {
+  const outro = useOutro();
+
   return (
-    <section id="contact" className="section-padding pb-20">
+    <section id="contact" className="section-padding pb-16 md:pb-20">
       <Container>
         <Reveal>
-          <div className="panel rounded-[2rem] px-6 py-8 md:px-10 md:py-12">
-            <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-              <div className="space-y-4">
-                <Typography variant="eyebrow">Contact</Typography>
-                <Typography
-                  as="h2"
-                  variant="display-sm"
-                  className="max-w-3xl text-balance text-[var(--foreground)]"
-                >
-                  {siteConfig.contactHeadline}
-                </Typography>
-                <Typography variant="body-lg" className="max-w-2xl">
-                  {siteConfig.contactDescription}
-                </Typography>
-              </div>
+          <motion.div
+            style={outro && !outro.reduceMotion ? { color: outro.textColor } : undefined}
+          >
+            <SectionHeading
+              title="Contact Me"
+              className="min-w-[280px] py-1 text-center !text-inherit lg:min-w-[400px] lg:py-5"
+            />
+          </motion.div>
+        </Reveal>
 
-              <div className="space-y-5 lg:justify-self-end">
-                <Button href={`mailto:${siteConfig.email}`} className="w-full sm:w-auto">
-                  {siteConfig.email}
-                </Button>
-                <div className="flex flex-wrap gap-4">
-                  {siteConfig.socialLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      className="type-nav text-[var(--muted-foreground)] transition hover:text-[var(--foreground)]"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
+        <Reveal delay={0.08}>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 md:gap-8">
+            {siteConfig.socialLinks.map((link) => (
+              <motion.a
+                key={link.label}
+                href={link.href}
+                target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                className="type-nav transition-opacity duration-300 hover:opacity-70"
+                style={
+                  outro && !outro.reduceMotion
+                    ? { color: outro.mutedColor }
+                    : { color: "#0a0a0a" }
+                }
+              >
+                {link.label}
+              </motion.a>
+            ))}
           </div>
         </Reveal>
       </Container>
