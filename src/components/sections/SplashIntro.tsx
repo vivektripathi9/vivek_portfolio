@@ -8,7 +8,6 @@ import { siteConfig } from "@/data/site";
 export function SplashIntro() {
   const [visible, setVisible] = useState(true);
   const reduceMotion = useReducedMotion();
-  const [firstName, lastName] = siteConfig.name.split(" ");
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -27,44 +26,25 @@ export function SplashIntro() {
           exit={{ opacity: 0, scale: 1.04 }}
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="relative px-6 text-center">
+          <div className="relative px-4 text-center sm:px-6">
             <div className="overflow-hidden pb-2">
               <motion.h1
-                className="type-display-xl text-white"
-                aria-label={siteConfig.name}
+                className="type-display-xl whitespace-nowrap text-white"
+                style={{ fontSize: "clamp(1.45rem, 7.2vw, 5.75rem)" }}
                 initial={
                   reduceMotion
                     ? false
-                    : { y: "110%", rotate: 4, opacity: 0.2 }
+                    : { y: "110%", opacity: 0.2 }
                 }
-                animate={{ y: "0%", rotate: 0, opacity: 1 }}
+                animate={{ y: "0%", opacity: 1 }}
                 transition={{
                   duration: 1.15,
                   ease: [0.16, 1, 0.3, 1],
                   delay: 0.1,
                 }}
               >
-                <span className="block">{firstName}</span>
+                {siteConfig.name}
               </motion.h1>
-            </div>
-
-            <div className="overflow-hidden">
-              <motion.p
-                className="type-display-lg text-[#c4a96a]"
-                initial={
-                  reduceMotion
-                    ? false
-                    : { y: "-110%", rotate: -3, opacity: 0.2 }
-                }
-                animate={{ y: "0%", rotate: 0, opacity: 1 }}
-                transition={{
-                  duration: 1.15,
-                  ease: [0.16, 1, 0.3, 1],
-                  delay: 0.28,
-                }}
-              >
-                {lastName}
-              </motion.p>
             </div>
 
             <motion.div

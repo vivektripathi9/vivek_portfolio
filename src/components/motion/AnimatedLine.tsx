@@ -22,9 +22,10 @@ function useLinkedProgress(
   });
 
   return useSpring(scrollYProgress, {
-    stiffness: 140,
-    damping: 32,
-    restDelta: 0.001,
+    stiffness: 55,
+    damping: 28,
+    mass: 0.55,
+    restDelta: 0.0005,
   });
 }
 
@@ -49,6 +50,7 @@ type AnimatedLineProps = {
   from?: "start" | "end";
   thickness?: number;
   offset?: [string, string];
+  glow?: boolean;
 };
 
 export function AnimatedLine({
@@ -58,10 +60,11 @@ export function AnimatedLine({
   from = "start",
   thickness = 4,
   offset,
+  glow = false,
 }: AnimatedLineProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const progress = useLinkedProgress(ref, offset ?? ["start 90%", "start 35%"]);
+  const progress = useLinkedProgress(ref, offset ?? ["start 92%", "start 30%"]);
   const origin =
     axis === "y"
       ? from === "end"
@@ -70,19 +73,35 @@ export function AnimatedLine({
       : from === "end"
         ? "100% 50%"
         : "0% 50%";
-  const start = Math.min(delay, 0.45);
+  const start = Math.min(delay, 0.4);
   const scale = useAxisScale(progress, axis, start, 1);
+  const opacity = useTransform(progress, [start, Math.min(start + 0.2, 0.85)], [0.35, 1]);
 
   return (
     <div ref={ref} aria-hidden="true" className={`pointer-events-none ${className}`}>
+      {glow ? (
+        <motion.div
+          className="absolute inset-0 bg-[#9e8857]/35 blur-[3px]"
+          style={{
+            transformOrigin: origin,
+            width: axis === "y" ? thickness + 4 : "100%",
+            height: axis === "x" ? thickness + 4 : "100%",
+            marginLeft: axis === "y" ? -2 : 0,
+            marginTop: axis === "x" ? -2 : 0,
+            scaleX: reduceMotion ? 1 : scale.scaleX,
+            scaleY: reduceMotion ? 1 : scale.scaleY,
+          }}
+        />
+      ) : null}
       <motion.div
-        className="bg-[#9e8857]"
+        className="relative bg-[#9e8857]"
         style={{
           transformOrigin: origin,
           width: axis === "y" ? thickness : "100%",
           height: axis === "x" ? thickness : "100%",
           scaleX: reduceMotion ? 1 : scale.scaleX,
           scaleY: reduceMotion ? 1 : scale.scaleY,
+          opacity: reduceMotion ? 1 : opacity,
         }}
       />
     </div>
@@ -103,10 +122,12 @@ export function AnimatedCorner({
 }: AnimatedCornerProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const progress = useLinkedProgress(ref, ["start 95%", "start 40%"]);
-  const start = Math.min(delay, 0.35);
-  const vertical = useTransform(progress, [start, Math.min(start + 0.45, 0.9)], [0, 1]);
-  const horizontal = useTransform(progress, [Math.min(start + 0.25, 0.7), 1], [0, 1]);
+  const progress = useLinkedProgress(ref, ["start 96%", "start 38%"]);
+  const start = Math.min(delay, 0.3);
+  const mid = Math.min(start + 0.38, 0.82);
+  const vertical = useTransform(progress, [start, mid], [0, 1]);
+  const horizontal = useTransform(progress, [Math.min(start + 0.22, 0.65), 1], [0, 1]);
+  const opacity = useTransform(progress, [start, mid], [0.4, 1]);
 
   return (
     <div ref={ref} aria-hidden="true" className={`pointer-events-none ${className}`}>
@@ -116,6 +137,7 @@ export function AnimatedCorner({
           width: thickness,
           height: "100%",
           scaleY: reduceMotion ? 1 : vertical,
+          opacity: reduceMotion ? 1 : opacity,
         }}
       />
       <motion.div
@@ -124,6 +146,7 @@ export function AnimatedCorner({
           height: thickness,
           width: "100%",
           scaleX: reduceMotion ? 1 : horizontal,
+          opacity: reduceMotion ? 1 : opacity,
         }}
       />
     </div>

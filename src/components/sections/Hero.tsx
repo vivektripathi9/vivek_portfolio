@@ -66,11 +66,13 @@ function AnimatedStat({
       viewport={{ once: false, amount: 0.35 }}
       transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
     >
-      <p className="mb-1.5 text-3xl font-black tabular-nums text-[#9e8857] sm:text-4xl lg:text-5xl">
+      <p className="mb-1.5 text-2xl font-black tabular-nums text-[#9e8857] sm:text-4xl lg:text-5xl">
         {display}
         {suffix}
       </p>
-      <p className="type-body-sm mx-auto max-w-[9rem] text-black/80">{label}</p>
+      <p className="type-body-sm mx-auto max-w-[6.5rem] text-[0.7rem] leading-snug text-black/80 sm:max-w-[9rem] sm:text-[0.875rem]">
+        {label}
+      </p>
     </motion.div>
   );
 }
@@ -88,15 +90,15 @@ export function Hero() {
   }, [reduceMotion]);
 
   return (
-    <section id="home" className="relative min-h-screen pb-16 pt-16 md:pb-20 md:pt-24">
+    <section id="home" className="relative min-h-[100svh] pb-14 pt-14 sm:pb-16 sm:pt-16 md:pb-20 md:pt-24">
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10 xl:gap-14">
-          <div className="space-y-6 lg:col-span-7 xl:col-span-8">
+        <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-12 lg:gap-10 xl:gap-14">
+          <div className="space-y-5 sm:space-y-6 lg:col-span-7 xl:col-span-8">
             <Reveal>
               <p className="text-base font-light text-black/90 md:text-lg">
                 {siteConfig.heroIntro}&nbsp;
               </p>
-              <div className="relative h-[clamp(3rem,9vw,5rem)] overflow-hidden">
+              <div className="relative h-[clamp(2.75rem,11vw,5rem)] overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={siteConfig.rotatingRoles[roleIndex]}
@@ -129,7 +131,7 @@ export function Hero() {
           </div>
 
           <div className="lg:col-span-5 xl:col-span-4">
-            <div className="grid grid-cols-3 gap-3 sm:gap-5 lg:gap-6">
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-5 lg:gap-6">
               {siteConfig.stats.map((stat, index) => (
                 <AnimatedStat
                   key={stat.label}
@@ -142,7 +144,7 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="mt-12 flex justify-center lg:mt-16">
+        <div className="mt-10 flex justify-center sm:mt-12 lg:mt-16">
           <a
             href="#about"
             className="type-nav text-[#9e8857] transition hover:text-black"

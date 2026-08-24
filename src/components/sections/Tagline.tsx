@@ -10,18 +10,14 @@ export function Tagline() {
   const outro = useOutro();
 
   return (
-    <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-6 py-24">
+    <section className="relative flex min-h-[55vh] items-center justify-center overflow-hidden px-5 py-16 sm:min-h-[70vh] sm:px-6 sm:py-24">
       <Reveal className="max-w-md text-center">
         <motion.div
           style={outro && !outro.reduceMotion ? { color: outro.mutedColor } : undefined}
         >
-          <p className="type-body-lg tracking-[0.08em] !text-inherit md:hidden">
-            {siteConfig.taglinePrimary}
-            <br />
-            {siteConfig.taglineSecondary}
-          </p>
+          {/* Same vertical treatment as desktop; scales down on small screens */}
           <p
-            className="hidden type-body-lg tracking-[0.18em] !text-inherit md:block"
+            className="type-body-lg tracking-[0.12em] !text-inherit sm:tracking-[0.18em]"
             style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
           >
             {siteConfig.taglinePrimary}, {siteConfig.taglineSecondary}

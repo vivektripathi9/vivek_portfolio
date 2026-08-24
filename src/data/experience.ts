@@ -3,32 +3,37 @@ export type ExperienceItem = {
   role: string;
   period: string;
   summary: string;
+  icon: string;
 };
 
 export const experience: ExperienceItem[] = [
   {
     company: "Pixel Foundry",
     role: "Frontend Developer",
-    period: "Feb 2022 - Jul 2022",
+    period: "Feb 2022 — Jul 2022",
     summary: '"Great attention to detail and a very good team member."',
+    icon: "/website_asset/icons/asymmetrik-brands-solid-full.svg",
   },
   {
     company: "Harbor Labs",
     role: "Web Developer",
-    period: "Aug 2022 - Dec 2022",
+    period: "Aug 2022 — Dec 2022",
     summary: '"It was a great help in improving the views of our service page, great job!"',
+    icon: "/website_asset/icons/cloudversify-brands-solid-full.svg",
   },
   {
     company: "North Exchange",
     role: "UI Engineer",
-    period: "Jan 2023 - Jun 2023",
+    period: "Jan 2023 — Jun 2023",
     summary: '"Vivek was very proactive with the design of our new website."',
+    icon: "/website_asset/icons/lumon-brands-solid-full.svg",
   },
   {
     company: "Fieldline Services",
     role: "Fullstack Developer",
-    period: "Jun 2023 - Dec 2025",
+    period: "Jun 2023 — Dec 2025",
     summary:
       '"Vivek was a dedicated and hard worker for a very long time and I appreciate the work he did for me!"',
+    icon: "/website_asset/icons/sitrox-brands-solid-full.svg",
   },
 ];

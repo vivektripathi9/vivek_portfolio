@@ -20,13 +20,13 @@ export function Contact() {
           >
             <SectionHeading
               title="Contact Me"
-              className="min-w-[280px] py-1 text-center !text-inherit lg:min-w-[400px] lg:py-5"
+              className="min-w-0 py-1 text-center !text-inherit sm:min-w-[280px] lg:min-w-[400px] lg:py-5"
             />
           </motion.div>
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 md:gap-8">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-4 sm:mt-8 sm:gap-6 md:gap-8">
             {siteConfig.socialLinks.map((link) => (
               <motion.a
                 key={link.label}
