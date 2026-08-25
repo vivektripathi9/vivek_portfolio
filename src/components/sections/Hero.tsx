@@ -17,7 +17,7 @@ import { siteConfig } from "@/data/site";
 
 function parseStatValue(value: string) {
   const match = value.match(/^(\d+)(.*)$/);
-  if (!match) return { target: 0, suffix: value };
+  if (!match) return { target: null as number | null, suffix: value };
   return { target: Number(match[1]), suffix: match[2] ?? "" };
 }
 
@@ -35,9 +35,10 @@ function AnimatedStat({
   const inView = useInView(ref, { once: false, amount: 0.4 });
   const { target, suffix } = parseStatValue(value);
   const spring = useSpring(0, { stiffness: 70, damping: 22, mass: 0.8 });
-  const [display, setDisplay] = useState(reduceMotion ? target : 0);
+  const [display, setDisplay] = useState(reduceMotion && target !== null ? target : 0);
 
   useEffect(() => {
+    if (target === null) return;
     if (reduceMotion) {
       setDisplay(target);
       return;
@@ -51,11 +52,11 @@ function AnimatedStat({
   }, [delay, inView, reduceMotion, spring, target]);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || target === null) return;
     return spring.on("change", (latest) => {
       setDisplay(Math.round(latest));
     });
-  }, [reduceMotion, spring]);
+  }, [reduceMotion, spring, target]);
 
   return (
     <motion.div
@@ -67,8 +68,7 @@ function AnimatedStat({
       transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       <p className="mb-1.5 text-2xl font-black tabular-nums text-[#9e8857] sm:text-4xl lg:text-5xl">
-        {display}
-        {suffix}
+        {target === null ? suffix : `${display}${suffix}`}
       </p>
       <p className="type-body-sm mx-auto max-w-[6.5rem] text-[0.7rem] leading-snug text-black/80 sm:max-w-[9rem] sm:text-[0.875rem]">
         {label}

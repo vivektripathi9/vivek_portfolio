@@ -4,6 +4,7 @@ export const siteConfig = {
   title: "Web Developer",
   email: "hello@vivektripathi.dev",
   hireUrl: "mailto:hello@vivektripathi.dev",
+  projectsHref: "/projects",
   portrait: "/website_asset/proflie.jpeg",
   rotatingRoles: ["Frontend!", "Backend!", "Vivek!", "Builder!"],
   heroIntro: "Hi, I'm",
@@ -19,7 +20,7 @@ export const siteConfig = {
   stats: [
     { value: "4+", label: "Years of Experience" },
     { value: "6K+", label: "Hours Worked" },
-    { value: "9+", label: "Projects worked on" },
+    { value: "Live", label: "Storefronts shipped" },
   ],
   socialLinks: [
     { label: "GitHub", href: "https://github.com/" },
