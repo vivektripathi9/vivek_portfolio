@@ -3,7 +3,9 @@ export const siteConfig = {
   firstName: "Vivek",
   title: "Web Developer",
   siteUrl: "https://vivektripathi.dev",
-  email: "hello@vivektripathi.dev",
+  email: "vvk22992@gmail.com",
+  phone: "+91 81958 05892",
+  whatsappUrl: "https://wa.me/918195805892",
   hireUrl: "https://calendly.com/vvk22992/30min",
   projectsHref: "/projects",
   portrait: "/website_asset/profile.jpeg",
@@ -31,6 +33,6 @@ export const siteConfig = {
     { label: "Services", href: "/services" },
   ],
   socialLinks: [
-    { label: "Email", href: "mailto:hello@vivektripathi.dev" },
+    { label: "Email", href: "mailto:vvk22992@gmail.com" },
   ],
 } as const;

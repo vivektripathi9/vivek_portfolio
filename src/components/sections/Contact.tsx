@@ -7,6 +7,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { siteConfig } from "@/data/site";
 
 export function Contact() {
@@ -41,7 +42,13 @@ export function Contact() {
 
         <Reveal delay={0.12}>
           <div className="mt-8 flex flex-col items-center gap-4">
-            <Button href={siteConfig.hireUrl}>Hire Me</Button>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button href={siteConfig.hireUrl}>Hire Me</Button>
+              <Button href={siteConfig.whatsappUrl} variant="whatsapp">
+                <WhatsAppIcon />
+                WhatsApp
+              </Button>
+            </div>
             <motion.a
               href={`mailto:${siteConfig.email}`}
               className="text-sm tracking-wide underline-offset-4 transition hover:underline hover:opacity-70"
@@ -53,6 +60,20 @@ export function Contact() {
               }
             >
               {siteConfig.email}
+            </motion.a>
+            <motion.a
+              href={siteConfig.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm tracking-wide text-black/55 underline-offset-4 transition hover:underline hover:text-black/80"
+              whileHover={outro?.reduceMotion ? undefined : { y: -2 }}
+              style={
+                outro && !outro.reduceMotion
+                  ? { color: outro.mutedColor }
+                  : undefined
+              }
+            >
+              {siteConfig.phone}
             </motion.a>
           </div>
         </Reveal>

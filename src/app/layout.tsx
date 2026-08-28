@@ -3,6 +3,7 @@ import { Inter, Monoton } from "next/font/google";
 import "./globals.css";
 
 import { siteConfig } from "@/data/site";
+import { WhatsAppFloat } from "@/components/ui/WhatsAppFloat";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         {children}
+        <WhatsAppFloat />
       </body>
     </html>
   );

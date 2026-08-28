@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ServiceGlyph } from "@/components/ui/ServiceGlyph";
 import { Typography } from "@/components/ui/Typography";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { serviceFaqs, serviceSteps, services } from "@/data/services";
 import { skills } from "@/data/skills";
 import { siteConfig } from "@/data/site";
@@ -359,6 +360,10 @@ export function Services() {
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Button href={siteConfig.hireUrl}>Hire Me</Button>
+                <Button href={siteConfig.whatsappUrl} variant="whatsapp">
+                  <WhatsAppIcon />
+                  WhatsApp
+                </Button>
                 <Button
                   href={siteConfig.projectsHref}
                   variant="outline"

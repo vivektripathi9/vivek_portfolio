@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 type ButtonProps = {
   href: string;
   children: ReactNode;
-  variant?: "primary" | "ghost" | "outline";
+  variant?: "primary" | "ghost" | "outline" | "whatsapp";
   className?: string;
   external?: boolean;
 };
@@ -26,6 +26,23 @@ export function Button({
     target: isExternal ? ("_blank" as const) : undefined,
     rel: isExternal ? "noopener noreferrer" : undefined,
   };
+
+  if (variant === "whatsapp") {
+    return (
+      <motion.div
+        className="inline-flex"
+        whileHover={reduceMotion ? undefined : { y: -4 }}
+        whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+      >
+        <Link
+          {...linkProps}
+          className={`inline-flex min-h-[2.5rem] items-center justify-center gap-2 bg-[#25D366] px-8 py-3 text-[0.8rem] font-medium uppercase tracking-[0.08em] text-white transition-colors duration-300 hover:bg-[#1ebe57] sm:text-[0.875rem] ${className}`}
+        >
+          {children}
+        </Link>
+      </motion.div>
+    );
+  }
 
   if (variant === "primary") {
     return (

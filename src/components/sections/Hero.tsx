@@ -13,6 +13,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Typography } from "@/components/ui/Typography";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { siteConfig } from "@/data/site";
 
 function parseStatValue(value: string) {
@@ -148,6 +149,10 @@ export function Hero() {
             <Reveal delay={0.14}>
               <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                 <Button href={siteConfig.hireUrl}>Hire Me</Button>
+                <Button href={siteConfig.whatsappUrl} variant="whatsapp">
+                  <WhatsAppIcon />
+                  WhatsApp
+                </Button>
                 <Button href={siteConfig.projectsHref} variant="outline">
                   See work
                 </Button>
