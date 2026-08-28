@@ -17,20 +17,21 @@ export function Button({
   children,
   variant = "primary",
   className = "",
-  external = false,
+  external,
 }: ButtonProps) {
   const reduceMotion = useReducedMotion();
+  const isExternal = external ?? /^https?:\/\//.test(href);
   const linkProps = {
     href,
-    target: external ? ("_blank" as const) : undefined,
-    rel: external ? "noopener noreferrer" : undefined,
+    target: isExternal ? ("_blank" as const) : undefined,
+    rel: isExternal ? "noopener noreferrer" : undefined,
   };
 
   if (variant === "primary") {
     return (
       <motion.div
         className="inline-flex"
-        whileHover={reduceMotion ? undefined : { y: -2 }}
+        whileHover={reduceMotion ? undefined : { y: -4 }}
         whileTap={reduceMotion ? undefined : { scale: 0.98 }}
       >
         <Link
@@ -56,11 +57,17 @@ export function Button({
   } as const;
 
   return (
-    <Link
-      {...linkProps}
-      className={`inline-flex items-center justify-center rounded-none px-8 py-3 text-[0.8rem] font-medium uppercase tracking-[0.08em] transition duration-300 sm:text-[0.875rem] ${ghostOutline[variant]} ${className}`}
+    <motion.div
+      className="inline-flex"
+      whileHover={reduceMotion ? undefined : { y: -4 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.98 }}
     >
-      {children}
-    </Link>
+      <Link
+        {...linkProps}
+        className={`inline-flex items-center justify-center rounded-none px-8 py-3 text-[0.8rem] font-medium uppercase tracking-[0.08em] transition duration-300 sm:text-[0.875rem] ${ghostOutline[variant]} ${className}`}
+      >
+        {children}
+      </Link>
+    </motion.div>
   );
 }

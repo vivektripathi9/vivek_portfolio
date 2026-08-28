@@ -10,9 +10,8 @@ export function BeyondBuilds() {
       </Typography>
       <div className="max-w-xl space-y-5">
         <Typography variant="body-md" className="text-black/70">
-          I&apos;ve also partnered with dozens of other Shopify brands on critical
-          features, performance work, and targeted UI refinements that moved the
-          numbers without a full rebuild.
+          I&apos;ve also partnered with other Shopify brands on critical features,
+          performance work, and targeted UI refinements — without a full rebuild.
         </Typography>
         <ul className="flex flex-wrap gap-x-5 gap-y-1">
           {extras.map((item) => (

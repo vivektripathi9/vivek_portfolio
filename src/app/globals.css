@@ -92,6 +92,23 @@ img {
     }
   }
 
+  .container-site.container-site-wide {
+    width: calc(100% - 1.5rem);
+    max-width: none;
+  }
+
+  @media (min-width: 768px) {
+    .container-site.container-site-wide {
+      width: calc(100% - 3rem);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-site.container-site-wide {
+      width: calc(100% - 4rem);
+    }
+  }
+
   .section-padding {
     padding-block: clamp(3.25rem, 9vw, var(--section-space));
   }

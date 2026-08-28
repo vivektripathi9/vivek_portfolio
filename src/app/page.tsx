@@ -1,4 +1,5 @@
 import { Footer } from "@/components/layout/Footer";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { OutroZone } from "@/components/motion/OutroZone";
 import { About } from "@/components/sections/About";
 import { Contact } from "@/components/sections/Contact";
@@ -15,8 +16,9 @@ export default function Home() {
     <div className="relative min-h-screen">
       <SplashIntro />
       <div className="relative">
+        <SiteHeader />
         <ScrollConnector />
-        <main>
+        <main id="content">
           <Hero />
           <About />
           <Skills />

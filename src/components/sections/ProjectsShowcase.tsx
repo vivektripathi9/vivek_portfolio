@@ -3,12 +3,13 @@
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import { useMemo, useState } from "react";
 
+import { PageEnter } from "@/components/motion/PageEnter";
 import { Reveal } from "@/components/motion/Reveal";
 import { BeyondBuilds } from "@/components/sections/BeyondBuilds";
 import { Container } from "@/components/ui/Container";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { Typography } from "@/components/ui/Typography";
-import { projectCategories, projects } from "@/data/projects";
+import { projectGroups, projects } from "@/data/projects";
 
 const marqueeItems = [
   "Shopify",
@@ -77,25 +78,26 @@ function IndustryMarquee() {
 }
 
 export function ProjectsShowcase() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeGroup, setActiveGroup] = useState<(typeof projectGroups)[number]>("All");
   const reduceMotion = useReducedMotion();
 
   const visibleProjects = useMemo(
     () =>
-      activeCategory === "All"
+      activeGroup === "All"
         ? projects.map((project, index) => ({ project, index }))
         : projects
             .map((project, index) => ({ project, index }))
-            .filter(({ project }) => project.category === activeCategory),
-    [activeCategory],
+            .filter(({ project }) => project.group === activeGroup),
+    [activeGroup],
   );
 
   const browsingLabel =
-    activeCategory === "All"
+    activeGroup === "All"
       ? "A living archive of storefronts, launches, and brand sites."
-      : `Work across ${activeCategory.toLowerCase()} — filter the collection.`;
+      : `Work across ${activeGroup.toLowerCase()} — filter the collection.`;
 
   return (
+    <PageEnter>
     <section className="section-padding pt-10 md:pt-14">
       <Container className="space-y-10 md:space-y-14">
         <div className="space-y-8">
@@ -115,15 +117,14 @@ export function ProjectsShowcase() {
               transition={{ duration: 0.6, delay: 0.28 }}
             >
               <Typography variant="body-lg" className="text-black/80">
-                A closer look at the shops, brand worlds, and product sites I have
-                helped bring to life — from sculpting shapewear and hair care to
-                Levantine food, gymwear, and cosmetics.
+                Shopify storefronts and brand websites I have helped ship — fashion
+                and beauty, food, film, architecture, and product.
               </Typography>
               <Typography variant="body-md" className="max-w-2xl text-black/65">
                 Each build is a different brief: some needed a full storefront with
                 a strong first impression, others needed quieter work — faster pages,
                 clearer collections, and interfaces that make the product easier to
-                trust. Scroll the work, or jump by category.
+                trust. Scroll the work, or jump by type.
               </Typography>
             </motion.div>
           </div>
@@ -139,13 +140,13 @@ export function ProjectsShowcase() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.45, delay: 0.2 }}
             >
-              {projectCategories.map((category) => {
-                const isActive = category === activeCategory;
+              {projectGroups.map((group) => {
+                const isActive = group === activeGroup;
                 return (
                   <button
-                    key={category}
+                    key={group}
                     type="button"
-                    onClick={() => setActiveCategory(category)}
+                    onClick={() => setActiveGroup(group)}
                     aria-pressed={isActive}
                     className="relative border border-black/20 px-3 py-1.5 text-[0.65rem] uppercase tracking-[0.12em] text-black/60 transition hover:border-black/50 hover:text-black"
                   >
@@ -159,7 +160,7 @@ export function ProjectsShowcase() {
                     <span
                       className={`relative z-[1] ${isActive ? "text-white" : ""}`}
                     >
-                      {category}
+                      {group}
                     </span>
                   </button>
                 );
@@ -190,12 +191,13 @@ export function ProjectsShowcase() {
           </AnimatePresence>
         </motion.div>
 
-        {activeCategory === "All" ? (
+        {activeGroup === "All" ? (
           <Reveal delay={0.08}>
             <BeyondBuilds />
           </Reveal>
         ) : null}
       </Container>
     </section>
+    </PageEnter>
   );
 }

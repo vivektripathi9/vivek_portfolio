@@ -98,25 +98,25 @@ export function About() {
 
             <Reveal delay={0.08}>
               <p className="type-body-lg text-black/85">
-                My name is {siteConfig.firstName}, I&apos;m a developer who likes challenges. As a{" "}
-                <Gold>Systems Engineer</Gold> and <Gold>Fullstack Developer</Gold>, I specialize in
-                creating fast and scalable web applications applying the best <Gold>Back-End</Gold>{" "}
-                technologies with modern <Gold>Front-End</Gold> interfaces.
+                I&apos;m {siteConfig.firstName}. I treat every store like a first impression you
+                only get once. <Gold>Shopify storefronts</Gold>, custom <Gold>front-end</Gold>,
+                and the <Gold>back-end</Gold> that holds it together. Quick on its feet, light on
+                clutter, hard to scroll past.
               </p>
             </Reveal>
 
             <Reveal delay={0.14}>
               <p className="type-body-md text-black/80">
-                I&apos;ve been working with various startups and companies developing applications,
-                performing optimizations, and refactoring projects. My philosophy is{" "}
-                <Gold>Simplicity</Gold> and <Gold>Functionality</Gold>. I strive to create scalable
-                and simple applications capable of solving complex problems.
+                I&apos;ve helped new brands get live and known ones get sharper. Sometimes
+                that&apos;s a full build. Sometimes it&apos;s a product page that finally
+                converts. <Gold>Simplicity</Gold> and <Gold>function</Gold> aren&apos;t a mood
+                board. They&apos;re the whole job.
               </p>
             </Reveal>
 
             <Reveal delay={0.2}>
               <p className="type-h4 pt-1 text-black">
-                More is <Gold>Less</Gold> and <Gold>Less</Gold> is <Gold>More</Gold>...
+                More is <Gold>Less</Gold> and <Gold>Less</Gold> is <Gold>More</Gold>.
               </p>
             </Reveal>
           </div>

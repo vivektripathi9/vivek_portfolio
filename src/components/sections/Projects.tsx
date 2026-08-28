@@ -7,10 +7,10 @@ import { Container } from "@/components/ui/Container";
 import { ProjectCard } from "@/components/ui/ProjectCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Typography } from "@/components/ui/Typography";
-import { projects } from "@/data/projects";
+import { featuredProjects } from "@/data/projects";
 import { siteConfig } from "@/data/site";
 
-const homepageProjects = projects.slice(0, 8);
+const homepageProjects = featuredProjects;
 
 export function Projects() {
   return (
@@ -23,7 +23,7 @@ export function Projects() {
               className="!mb-0 inline-block bg-[rgba(158,104,87,0.1)] p-2"
             />
             <p className="max-w-xs type-body-sm text-black/55 sm:text-right">
-              Selected client and product websites across ecommerce, beauty, fashion, and more.
+              Selected storefronts and brand sites — fashion, food, film, architecture, and real estate.
             </p>
           </div>
         </Reveal>

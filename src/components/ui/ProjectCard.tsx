@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -57,7 +58,7 @@ function DeviceMockup({
               src={src}
               alt={alt}
               fill
-              className="object-cover object-top"
+              className="object-cover object-top transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
               sizes="(max-width: 640px) 70vw, 35vw"
               priority={priority}
             />
@@ -71,13 +72,13 @@ function DeviceMockup({
       <div className="absolute bottom-[9%] right-[8%] z-[1] w-[24%] overflow-hidden rounded-[1.15rem] border-[5px] border-[#1c1c1c] bg-[#1c1c1c] shadow-[0_16px_34px_rgba(0,0,0,0.3)] sm:rounded-[1.35rem] sm:border-[6px]">
         <div className="relative mx-auto mt-1 h-1 w-7 rounded-full bg-[#444] sm:mt-1.5 sm:h-1.5 sm:w-8" />
         <div className="relative aspect-[9/19] overflow-hidden bg-white">
-          <Image
-            src={src}
-            alt=""
-            fill
-            className="object-cover object-top"
-            sizes="(max-width: 640px) 28vw, 14vw"
-          />
+            <Image
+              src={src}
+              alt=""
+              fill
+              className="object-cover object-top transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08]"
+              sizes="(max-width: 640px) 28vw, 14vw"
+            />
         </div>
       </div>
     </div>
@@ -85,17 +86,22 @@ function DeviceMockup({
 }
 
 export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
+  const reduceMotion = useReducedMotion();
   const label = project.sector ?? project.category;
   const cta = project.ctaLabel ?? "Store";
 
   return (
-    <article className="flex h-full flex-col">
+    <motion.article
+      className="group flex h-full flex-col"
+      whileHover={reduceMotion ? undefined : { y: -8 }}
+      transition={{ type: "spring", stiffness: 320, damping: 26 }}
+    >
       {project.liveUrl ? (
         <Link
           href={project.liveUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="block transition duration-300 hover:-translate-y-0.5"
+          className="group block"
           aria-label={`Open ${project.title} website`}
         >
           <DeviceMockup
@@ -113,11 +119,17 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       )}
 
       <div className="flex flex-1 flex-col pt-5">
-        {label ? (
-          <p className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-black/40">
-            {label}
-          </p>
-        ) : null}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          {project.role ? (
+            <p className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-[#7a683f]">
+              {project.role}
+            </p>
+          ) : label ? (
+            <p className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-black/40">
+              {label}
+            </p>
+          ) : null}
+        </div>
 
         <Typography as="h3" variant="h2" className="mt-2 text-black">
           {project.title}
@@ -130,6 +142,19 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         <Typography variant="body-sm" className="mt-3 max-w-md text-black/55">
           {project.description}
         </Typography>
+
+        {project.technologies.length > 0 ? (
+          <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
+            {project.technologies.map((tech) => (
+              <li
+                key={tech}
+                className="text-[0.65rem] uppercase tracking-[0.14em] text-black/35"
+              >
+                {tech}
+              </li>
+            ))}
+          </ul>
+        ) : null}
 
         {project.liveUrl ? (
           <div className="mt-auto pt-5">
@@ -145,6 +170,6 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
           </div>
         ) : null}
       </div>
-    </article>
+    </motion.article>
   );
 }

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Next.js">
+  <circle cx="90" cy="90" r="90" fill="#000"/>
+  <path
+    fill="url(#next-mark)"
+    d="M149.5 157.1 69.2 43.6H52.9V136h13.1V64.2l70.3 98.7c4.6-1.8 8.9-4 12.9-6.5z"
+  />
+  <path fill="url(#next-fade)" d="M121.9 43.6h12.9V136h-12.9z"/>
+  <defs>
+    <linearGradient id="next-mark" x1="109" y1="118.2" x2="144.3" y2="140.1">
+      <stop stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="next-fade" x1="128.4" y1="43.6" x2="128.4" y2="121.3">
+      <stop stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>

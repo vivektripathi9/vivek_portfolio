@@ -153,9 +153,15 @@ export function Experience() {
                             {item.company}
                           </Typography>
 
-                          <blockquote className="relative max-w-xl pl-4 type-body-md italic text-black/80 before:absolute before:left-0 before:top-1 before:h-[calc(100%-0.5rem)] before:w-0.5 before:bg-[#9e8857]">
+                          <p className="max-w-xl type-body-md text-black/75">
                             {item.summary}
-                          </blockquote>
+                          </p>
+
+                          {item.quote ? (
+                            <blockquote className="relative max-w-xl pl-4 type-body-sm italic text-black/65 before:absolute before:left-0 before:top-1 before:h-[calc(100%-0.5rem)] before:w-0.5 before:bg-[#9e8857]">
+                              {item.quote}
+                            </blockquote>
+                          ) : null}
                         </div>
                       </div>
 
