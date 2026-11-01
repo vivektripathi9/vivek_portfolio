@@ -1,23 +1,19 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import Image from "next/image";
-import { useState, type CSSProperties } from "react";
+import { useRef, useState } from "react";
 
-import { PageEnter } from "@/components/motion/PageEnter";
 import { Reveal } from "@/components/motion/Reveal";
-import { Button } from "@/components/ui/Button";
+import { TextReveal } from "@/components/motion/TextReveal";
 import { Container } from "@/components/ui/Container";
 import { ServiceGlyph } from "@/components/ui/ServiceGlyph";
-import { Typography } from "@/components/ui/Typography";
-import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
+import { Spotlight } from "@/components/ui/Spotlight";
 import { serviceFaqs, serviceSteps, services } from "@/data/services";
 import { skills } from "@/data/skills";
-import { siteConfig } from "@/data/site";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 const skillByName = new Map(skills.map((skill) => [skill.name, skill]));
-const stepColors = ["#3d5a80", "#c45c3e", "#2f5d50"] as const;
 
 function stackItems(names: string[]) {
   return names
@@ -25,357 +21,202 @@ function stackItems(names: string[]) {
     .filter((item): item is (typeof skills)[number] => Boolean(item));
 }
 
-function bandStyle(accent: string, wash = 16): CSSProperties {
-  return {
-    backgroundColor: `color-mix(in srgb, ${accent} ${wash}%, white)`,
-  };
+function StepCard({
+  step,
+  index,
+  total,
+  progress,
+}: {
+  step: (typeof serviceSteps)[number];
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+}) {
+  const reduceMotion = useHydratedReducedMotion();
+  const scale = useTransform(progress, [index / total, 1], [1, 1 - (total - index) * 0.035]);
+
+  return (
+    <div className="sticky" style={{ top: `${6.5 + index * 1.75}rem` }}>
+      <motion.article
+        className="flex min-h-[22rem] origin-top flex-col justify-between rounded-3xl border border-line bg-background p-7 shadow-[0_-12px_40px_rgba(15,15,16,0.07)] md:p-12"
+        style={reduceMotion ? undefined : { scale }}
+      >
+        <div className="flex items-start justify-between gap-6">
+          <span className="font-display text-[clamp(3.5rem,7vw,7rem)] leading-none font-medium tracking-[-0.04em] text-accent">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <ServiceGlyph name={step.icon} className="h-7 w-7" />
+        </div>
+        <div className="mt-10 grid gap-4 md:grid-cols-2 md:gap-10">
+          <h3 className="display-md">{step.title}</h3>
+          <p className="body-lg">{step.details}</p>
+        </div>
+      </motion.article>
+    </div>
+  );
 }
 
 export function Services() {
   const reduceMotion = useHydratedReducedMotion();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeId, setActiveId] = useState(services[0].id);
+  const stepsRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: stepsProgress } = useScroll({ target: stepsRef, offset: ["start start", "end end"] });
 
   return (
-    <PageEnter>
-      <section className="section-padding bg-[#f4f6f8] pt-10 md:pt-14">
-        <Container wide className="space-y-12 md:space-y-16">
-          <header className="grid gap-8 border-b border-black/10 pb-10 md:grid-cols-12 md:items-start md:gap-10 md:pb-14 lg:gap-14">
-            <div className="md:col-span-5">
-              <Reveal>
-                <h1 className="type-eyebrow text-[#1f4b6e]">Services</h1>
-              </Reveal>
-              <motion.div
-                aria-hidden="true"
-                className="mt-5 h-1.5 w-24 origin-left bg-[#c45c3e]"
-                initial={reduceMotion ? false : { scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              />
-              <Reveal delay={0.1}>
-                <motion.nav
-                  aria-label="Services on this page"
-                  className="mt-6 flex flex-wrap gap-2"
-                  initial={reduceMotion ? false : "hidden"}
-                  animate="show"
-                  variants={{
-                    hidden: {},
-                    show: {
-                      transition: { staggerChildren: 0.05, delayChildren: 0.18 },
-                    },
-                  }}
-                >
-                  {services.map((service) => (
-                    <motion.a
-                      key={service.id}
+    <>
+      <section className="canvas-dots pb-16 pt-36 md:pb-24 md:pt-48">
+        <Container className="text-center">
+          <p className="label mb-6">Services — {String(services.length).padStart(2, "0")}</p>
+          <TextReveal as="h1" className="display-xl" text={"Idea to\n*live site.*"} stagger={0.08} />
+          <p className="body-lg mx-auto mt-8 max-w-2xl">
+            I take brands from idea to a live site you can sell on. New storefronts, redesigns, migrations,
+            campaign pages, and the front-end and back-end work in between.
+          </p>
+        </Container>
+      </section>
+
+      <section className="border-t border-line py-16 md:py-24">
+        <Container className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <nav aria-label="Services on this page" className="hidden lg:col-span-3 lg:block">
+            <ul className="sticky top-32 space-y-1">
+              {services.map((service) => {
+                const active = activeId === service.id;
+                return (
+                  <li key={service.id}>
+                    <a
                       href={`#${service.id}`}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.12em]"
-                      style={{ backgroundColor: service.accent, color: "#fff" }}
-                      variants={{
-                        hidden: { opacity: 0, y: 10 },
-                        show: { opacity: 1, y: 0 },
-                      }}
-                      whileHover={reduceMotion ? undefined : { y: -3, scale: 1.04 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 24 }}
+                      aria-current={active ? "true" : undefined}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-300 ${active ? "bg-surface text-foreground" : "text-soft hover:text-foreground"}`}
                     >
-                      <span className="font-mono text-[0.62rem] tracking-[0.16em] text-white/75">
-                        {service.number}
-                      </span>
+                      <span className={`font-mono text-xs ${active ? "text-accent" : ""}`}>{service.number}</span>
                       {service.shortTitle}
-                    </motion.a>
-                  ))}
-                </motion.nav>
-              </Reveal>
-            </div>
-            <div className="md:col-span-7">
-              <Reveal delay={0.08}>
-                <Typography variant="body-lg" className="max-w-2xl text-black/80">
-                  I take brands from idea to a live site you can sell on. New
-                  storefronts, redesigns, migrations, campaign pages, and the
-                  front-end and back-end work in between.
-                </Typography>
-              </Reveal>
-            </div>
-          </header>
-
-          <ol className="space-y-6 md:space-y-8">
-            {services.map((service, index) => {
-              const stack = stackItems(service.stack);
-
-              return (
-                <li key={service.id} id={service.id} className="scroll-mt-28">
-                  <Reveal delay={Math.min(index * 0.04, 0.12)}>
-                    <article
-                      className="grid gap-8 border-l-[6px] p-6 sm:p-8 md:grid-cols-12 md:gap-10 md:p-10 lg:gap-14 lg:p-12"
-                      style={{
-                        ...bandStyle(service.accent),
-                        borderLeftColor: service.accent,
-                      }}
-                    >
-                      <div className="md:col-span-4">
-                        <p
-                          className="font-mono text-[0.7rem] tracking-[0.22em]"
-                          style={{ color: service.accent }}
-                        >
-                          {service.number}
-                        </p>
-                        <div className="mt-4 flex items-start gap-3">
-                          <motion.span
-                            className="flex h-12 w-12 shrink-0 items-center justify-center text-white"
-                            style={{ backgroundColor: service.accent }}
-                            whileHover={
-                              reduceMotion ? undefined : { rotate: -8, scale: 1.06 }
-                            }
-                            transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                          >
-                            <ServiceGlyph name={service.icon} className="h-6 w-6" />
-                          </motion.span>
-                          <Typography as="h2" variant="h3" className="text-black">
-                            {service.title}
-                          </Typography>
-                        </div>
-                        <p
-                          className="mt-5 inline-block px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.14em] text-white"
-                          style={{ backgroundColor: service.accent }}
-                        >
-                          {service.timeline}
-                        </p>
-                      </div>
-
-                      <div className="min-w-0 space-y-8 md:col-span-8">
-                        <div className="space-y-4">
-                          <Typography variant="body-lg" className="text-black/80">
-                            {service.details}
-                          </Typography>
-                          <Typography variant="body-md" className="text-black/65">
-                            {service.detailsExtra}
-                          </Typography>
-                        </div>
-
-                        <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
-                          <div
-                            className="border-l-4 bg-white p-4 sm:p-5"
-                            style={{ borderLeftColor: service.accent }}
-                          >
-                            <p
-                              className="text-[0.7rem] font-semibold uppercase tracking-[0.16em]"
-                              style={{ color: service.accent }}
-                            >
-                              Best for
-                            </p>
-                            <p className="mt-2 type-body-sm text-black/70">
-                              {service.bestFor}
-                            </p>
-                          </div>
-                          <div
-                            className="border-l-4 bg-white p-4 sm:p-5"
-                            style={{ borderLeftColor: service.accent }}
-                          >
-                            <p
-                              className="text-[0.7rem] font-semibold uppercase tracking-[0.16em]"
-                              style={{ color: service.accent }}
-                            >
-                              Includes
-                            </p>
-                            <ul className="mt-3 flex flex-wrap gap-2">
-                              {service.includes.map((item) => (
-                                <li
-                                  key={item}
-                                  className="px-2.5 py-1 text-[0.72rem] leading-snug"
-                                  style={{
-                                    color: service.accent,
-                                    backgroundColor: `color-mix(in srgb, ${service.accent} 12%, white)`,
-                                  }}
-                                >
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-
-                        <ul className="grid gap-3 sm:grid-cols-2">
-                          {service.deliverables.map((item) => (
-                            <motion.li
-                              key={item.label}
-                              className="flex gap-3 border-t-2 bg-white p-4"
-                              style={{ borderTopColor: service.accent }}
-                              whileHover={reduceMotion ? undefined : { y: -3 }}
-                              transition={{ type: "spring", stiffness: 380, damping: 24 }}
-                            >
-                              <span
-                                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center text-white"
-                                style={{ backgroundColor: service.accent }}
-                              >
-                                <ServiceGlyph name={item.icon} className="h-5 w-5" />
-                              </span>
-                              <div>
-                                <p className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-black">
-                                  {item.label}
-                                </p>
-                                <p className="mt-1 type-body-sm text-black/60">
-                                  {item.text}
-                                </p>
-                              </div>
-                            </motion.li>
-                          ))}
-                        </ul>
-
-                        {stack.length > 0 ? (
-                          <ul className="flex flex-wrap items-center gap-x-5 gap-y-3">
-                            {stack.map((item) => (
-                              <li key={item.name} className="flex items-center gap-2">
-                                <Image
-                                  src={item.icon}
-                                  alt=""
-                                  width={20}
-                                  height={20}
-                                  className="h-5 w-5 object-contain"
-                                />
-                                <span className="text-[0.65rem] uppercase tracking-[0.12em] text-black/45">
-                                  {item.name}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : null}
-                      </div>
-                    </article>
-                  </Reveal>
-                </li>
-              );
-            })}
-          </ol>
-
-          <div className="pt-4 md:pt-8">
-            <Reveal>
-              <Typography as="h2" variant="h3" className="mb-8 text-black">
-                How a project moves
-              </Typography>
-            </Reveal>
-            <ol className="grid gap-4 sm:grid-cols-3 sm:gap-5">
-              {serviceSteps.map((step, index) => {
-                const color = stepColors[index];
-                return (
-                  <motion.li
-                    key={step.title}
-                    className="border-t-4 bg-white p-6 md:p-8"
-                    style={{ borderTopColor: color }}
-                    whileHover={reduceMotion ? undefined : { y: -6 }}
-                    transition={{ type: "spring", stiffness: 320, damping: 24 }}
-                  >
-                    <Reveal delay={index * 0.06}>
-                      <span
-                        className="flex h-11 w-11 items-center justify-center text-white"
-                        style={{ backgroundColor: color }}
-                      >
-                        <ServiceGlyph name={step.icon} className="h-5 w-5" />
-                      </span>
-                      <p
-                        className="mt-5 font-mono text-[0.7rem] tracking-[0.22em]"
-                        style={{ color }}
-                      >
-                        {String(index + 1).padStart(2, "0")}
-                      </p>
-                      <Typography as="h3" variant="h4" className="mt-2 text-black">
-                        {step.title}
-                      </Typography>
-                      <Typography variant="body-md" className="mt-3 text-black/70">
-                        {step.details}
-                      </Typography>
-                    </Reveal>
-                  </motion.li>
-                );
-              })}
-            </ol>
-          </div>
-
-          <div>
-            <Reveal>
-              <Typography as="h2" variant="h3" className="mb-6 text-black">
-                Common questions
-              </Typography>
-            </Reveal>
-            <ul className="divide-y divide-black/10 border border-black/10 bg-white">
-              {serviceFaqs.map((item, index) => {
-                const isOpen = openFaq === index;
-                return (
-                  <li
-                    key={item.question}
-                    style={
-                      isOpen
-                        ? { backgroundColor: "color-mix(in srgb, #3d5a80 7%, white)" }
-                        : undefined
-                    }
-                  >
-                    <button
-                      type="button"
-                      aria-expanded={isOpen}
-                      onClick={() => setOpenFaq(isOpen ? null : index)}
-                      className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
-                    >
-                      <span className="text-[0.95rem] font-semibold text-black sm:text-base">
-                        {item.question}
-                      </span>
-                      <motion.span
-                        animate={{ rotate: isOpen ? 45 : 0 }}
-                        className="flex h-8 w-8 shrink-0 items-center justify-center text-lg leading-none"
-                        style={{ color: isOpen ? "#3d5a80" : "rgba(0,0,0,0.45)" }}
-                      >
-                        +
-                      </motion.span>
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {isOpen ? (
-                        <motion.div
-                          initial={reduceMotion ? false : { height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-                          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                          className="overflow-hidden"
-                        >
-                          <p className="max-w-4xl px-5 pb-5 type-body-md text-black/65 sm:px-6">
-                            {item.answer}
-                          </p>
-                        </motion.div>
-                      ) : null}
-                    </AnimatePresence>
+                    </a>
                   </li>
                 );
               })}
             </ul>
-          </div>
+          </nav>
 
-          <Reveal>
-            <div
-              className="flex flex-col gap-6 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:px-10 sm:py-10"
-              style={{ backgroundColor: "#1f4b6e" }}
-            >
-              <div className="max-w-xl space-y-2">
-                <Typography as="h2" variant="h4" className="text-white">
-                  Ready when you are
-                </Typography>
-                <Typography variant="body-md" className="text-white/75">
-                  Book a 30-minute call, or look through the work first.
-                </Typography>
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button href={siteConfig.hireUrl}>Hire Me</Button>
-                <Button href={siteConfig.whatsappUrl} variant="whatsapp">
-                  <WhatsAppIcon />
-                  WhatsApp
-                </Button>
-                <Button
-                  href={siteConfig.projectsHref}
-                  variant="outline"
-                  className="!border-white !text-white hover:!bg-white hover:!text-[#1f4b6e]"
+          <ol className="space-y-24 md:space-y-36 lg:col-span-9">
+            {services.map((service) => {
+              const stack = stackItems(service.stack);
+
+              return (
+                <motion.li
+                  key={service.id}
+                  id={service.id}
+                  className="scroll-mt-28"
+                  onViewportEnter={() => setActiveId(service.id)}
+                  viewport={{ amount: 0.3 }}
                 >
-                  See work
-                </Button>
-              </div>
-            </div>
-          </Reveal>
+                  <article>
+                    <p className="label">{service.number} — {service.timeline}</p>
+                    <TextReveal className="display-lg mt-4" text={service.title} />
+                    <Reveal className="mt-8 grid gap-6 md:grid-cols-2 md:gap-10">
+                      <p className="body-lg">{service.details}</p>
+                      <div className="space-y-5">
+                        <p className="body-md">{service.detailsExtra}</p>
+                        <p className="body-md">
+                          <span className="text-foreground">Best for: </span>
+                          {service.bestFor}
+                        </p>
+                      </div>
+                    </Reveal>
+
+                    <ul className="mt-10 grid gap-3 sm:grid-cols-2">
+                      {service.deliverables.map((item, index) => (
+                        <li key={item.label}>
+                          <Reveal delay={index * 0.06} className="h-full">
+                            <Spotlight className="h-full rounded-2xl border border-line bg-surface p-5 transition-colors duration-300 hover:border-accent/60">
+                              <span className="text-accent">
+                                <ServiceGlyph name={item.icon} className="h-6 w-6" />
+                              </span>
+                              <p className="mt-5 font-medium">{item.label}</p>
+                              <p className="body-sm mt-1">{item.text}</p>
+                            </Spotlight>
+                          </Reveal>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-8 flex flex-wrap items-center gap-2">
+                      {service.includes.map((item) => (
+                        <span key={item} className="rounded-full border border-line px-3 py-1.5 text-xs text-muted">
+                          {item}
+                        </span>
+                      ))}
+                      {stack.map((item) => (
+                        <span key={item.name} title={item.name} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f3efe7]">
+                          <Image src={item.icon} alt={item.name} width={18} height={18} className="h-[18px] w-[18px] object-contain" />
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                </motion.li>
+              );
+            })}
+          </ol>
         </Container>
       </section>
-    </PageEnter>
+
+      <section className="theme-light rounded-[2rem] section-padding md:rounded-[3rem]">
+        <Container>
+          <p className="label mb-5">Process</p>
+          <TextReveal className="display-lg" text={"How a project *moves*"} />
+          <div ref={stepsRef} className="mt-12 space-y-6 pb-8">
+            {serviceSteps.map((step, index) => (
+              <StepCard key={step.title} step={step} index={index} total={serviceSteps.length} progress={stepsProgress} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="section-padding">
+        <Container className="grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <TextReveal className="display-lg" text={"Common\n*questions*"} />
+          </div>
+          <ul className="border-b border-line lg:col-span-7">
+            {serviceFaqs.map((item, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <li key={item.question} className="border-t border-line">
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="flex w-full items-center justify-between gap-6 py-6 text-left"
+                  >
+                    <span className="display-sm">{item.question}</span>
+                    <motion.span
+                      aria-hidden="true"
+                      animate={{ rotate: isOpen ? 135 : 0 }}
+                      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-xl leading-none transition-colors ${isOpen ? "border-accent text-accent" : "border-line"}`}
+                    >
+                      +
+                    </motion.span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen ? (
+                      <motion.div
+                        initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <p className="body-md max-w-2xl pb-7">{item.answer}</p>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </li>
+              );
+            })}
+          </ul>
+        </Container>
+      </section>
+    </>
   );
 }

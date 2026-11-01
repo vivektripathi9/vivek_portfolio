@@ -1,58 +1,33 @@
 "use client";
 
-import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { AnimatedBrandE } from "@/components/motion/AnimatedBrandE";
+import { pauseScroll } from "@/components/motion/SmoothScroll";
 import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
-import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { siteConfig } from "@/data/site";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
-function NavLink({
-  href,
-  label,
-  className = "",
-  onClick,
-}: {
-  href: string;
-  label: string;
-  className?: string;
-  onClick?: () => void;
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className={`group relative type-nav py-2 text-black/55 transition-colors hover:text-black ${className}`}
-    >
-      {label}
-      <span
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-1 h-px origin-left scale-x-0 bg-black transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100"
-      />
-    </Link>
-  );
-}
+const ease = [0.76, 0, 0.24, 1] as const;
 
-export function SiteHeader({ wide = false }: { wide?: boolean }) {
+export function SiteHeader() {
   const reduceMotion = useHydratedReducedMotion();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const headerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 140,
-    damping: 28,
-    restDelta: 0.001,
-  });
+  const [hidden, setHidden] = useState(false);
+  const { scrollY } = useScroll();
 
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  useMotionValueEvent(scrollY, "change", (current) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    setHidden(current > previous && current > 240);
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -62,29 +37,19 @@ export function SiteHeader({ wide = false }: { wide?: boolean }) {
     };
 
     document.addEventListener("keydown", onKey);
+    pauseScroll(true);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", onKey);
+      pauseScroll(false);
       document.body.style.overflow = previousOverflow;
     };
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!(event.target instanceof Node)) return;
-      if (!headerRef.current?.contains(event.target)) setOpen(false);
-    };
-
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [open]);
-
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 640px)");
+    const media = window.matchMedia("(min-width: 768px)");
     const onChange = () => {
       if (media.matches) setOpen(false);
     };
@@ -93,119 +58,102 @@ export function SiteHeader({ wide = false }: { wide?: boolean }) {
   }, []);
 
   return (
-    <motion.header
-      ref={headerRef}
-      className="sticky top-0 z-50 border-b border-black/10 bg-white/90 backdrop-blur-md"
-      initial={reduceMotion ? false : { y: -28, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <div className="relative z-10">
-      <Container wide={wide} className="flex items-center justify-between gap-4 py-3.5 md:py-4">
-        <Link
-          href="/"
-          aria-label={`${siteConfig.name} — home`}
-          className="group block min-w-0 pb-0.5"
-          onClick={() => setOpen(false)}
-        >
-          <motion.span
-            className="type-display-sm inline-flex items-center whitespace-nowrap leading-none tracking-[0.07em] text-black transition-colors group-hover:text-[var(--accent)]"
-            style={{ fontSize: "clamp(1.05rem, 2.8vw, 1.45rem)" }}
-            initial={false}
-            animate={{ y: "0%", opacity: 1 }}
-            transition={{
-              duration: 1,
-              ease: [0.16, 1, 0.3, 1],
-              delay: 0.08,
-            }}
+    <>
+      <motion.header
+        className="fixed inset-x-0 top-3 z-50 md:top-5"
+        animate={{ y: hidden && !open ? "-140%" : "0%" }}
+        transition={{ duration: reduceMotion ? 0 : 0.6, ease }}
+      >
+        <div className="glass mx-auto flex w-[calc(100%-1.5rem)] max-w-5xl items-center justify-between gap-4 rounded-full py-2 pl-5 pr-2 text-[#f3efe7]">
+          <Link
+            href="/"
+            aria-label={`${siteConfig.name} — home`}
+            className="font-display text-[1.05rem] font-medium tracking-tight whitespace-nowrap"
+            onClick={() => setOpen(false)}
           >
-            <span className="inline-block">Viv</span>
-            <AnimatedBrandE reduceMotion={reduceMotion} />
-            <span className="inline-block">k</span>
-          </motion.span>
-        </Link>
+            Vivek<em className="font-serif font-normal text-[#e3c285]"> Tripathi</em>
+          </Link>
 
-        <nav className="flex shrink-0 items-center gap-2 sm:gap-5">
-          <div className="hidden items-center gap-4 sm:flex md:gap-5">
-            {siteConfig.navLinks.map((link) => (
-              <NavLink key={link.href} href={link.href} label={link.label} />
-            ))}
+          <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+            {siteConfig.navLinks.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className="relative rounded-full px-4 py-2 text-sm text-[#f3efe7]/75 transition-colors hover:text-[#f3efe7]"
+                >
+                  {active ? (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-full bg-[#f3efe7]/12"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  ) : null}
+                  <span className="relative">{link.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <Button href={siteConfig.hireUrl} className="!min-h-10 !bg-[#e3c285] !px-5 !text-[#0a0a0b]">
+              Hire me
+            </Button>
+            <button
+              type="button"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f3efe7]/10 md:hidden"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              onClick={() => setOpen((value) => !value)}
+            >
+              <span className="relative block h-2.5 w-4" aria-hidden="true">
+                <span
+                  className={`absolute left-0 top-0 h-px w-full bg-[#f3efe7] transition-transform duration-300 ${open ? "translate-y-[5px] rotate-45" : ""}`}
+                />
+                <span
+                  className={`absolute bottom-0 left-0 h-px w-full bg-[#f3efe7] transition-transform duration-300 ${open ? "-translate-y-[4px] -rotate-45" : ""}`}
+                />
+              </span>
+            </button>
           </div>
-
-          <Button
-            href={siteConfig.hireUrl}
-            className="!min-h-0 !px-4 !py-2 sm:!min-h-[2.5rem] sm:!px-8 sm:!py-3"
-          >
-            Hire Me
-          </Button>
-
-          <button
-            type="button"
-            className="relative flex h-11 w-11 items-center justify-center sm:hidden"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            onClick={() => setOpen((value) => !value)}
-          >
-            <span className="relative block h-3.5 w-[18px]" aria-hidden="true">
-              <span
-                className={`absolute left-0 top-0 h-px w-full bg-black transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  open ? "translate-y-[6.5px] rotate-45" : ""
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-[6.5px] h-px w-full bg-black transition-opacity duration-150 ${
-                  open ? "opacity-0" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-[13px] h-px w-full bg-black transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  open ? "-translate-y-[6.5px] -rotate-45" : ""
-                }`}
-              />
-            </span>
-          </button>
-        </nav>
-      </Container>
+        </div>
+      </motion.header>
 
       <AnimatePresence>
         {open ? (
           <motion.div
-            key="mobile-menu"
             id="mobile-nav"
-            className="overflow-hidden border-t border-black/10 bg-white sm:hidden"
-            initial={reduceMotion ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            data-lenis-prevent
+            className="fixed inset-0 z-40 flex flex-col justify-end bg-[#0a0a0b] px-5 pb-24 pt-24 text-[#f3efe7] md:hidden"
+            initial={reduceMotion ? false : { clipPath: "inset(0% 0% 100% 0%)" }}
+            animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
+            exit={reduceMotion ? undefined : { clipPath: "inset(0% 0% 100% 0%)" }}
+            transition={{ duration: 0.7, ease }}
           >
-            <Container wide={wide} className="flex flex-col gap-1 py-4">
-              {siteConfig.navLinks.map((link) => (
-                <NavLink
-                  key={link.href}
-                  href={link.href}
-                  label={link.label}
-                  className="py-3 text-base text-black"
-                  onClick={() => setOpen(false)}
-                />
+            <nav aria-label="Mobile" className="flex flex-col gap-2">
+              {[{ label: "Home", href: "/" }, ...siteConfig.navLinks].map((link, index) => (
+                <div key={link.href} className="overflow-hidden">
+                  <motion.div
+                    initial={reduceMotion ? false : { y: "110%" }}
+                    animate={{ y: "0%" }}
+                    transition={{ duration: 0.8, delay: 0.15 + index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <Link href={link.href} onClick={() => setOpen(false)} className="display-lg block !text-[#f3efe7]">
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                </div>
               ))}
-              <div className="mt-3 flex flex-col gap-3 pb-2 [&_.inline-flex]:w-full [&_a]:w-full">
-                <Button href={siteConfig.whatsappUrl} variant="whatsapp">
-                  <WhatsAppIcon />
-                  WhatsApp
-                </Button>
-              </div>
-            </Container>
+            </nav>
+            <a href={`mailto:${siteConfig.email}`} className="body-md mt-8 !text-[#f3efe7]/70">
+              {siteConfig.email}
+            </a>
           </motion.div>
         ) : null}
       </AnimatePresence>
-      </div>
-
-      <motion.span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left bg-black"
-        style={{ scaleX: progress }}
-      />
-    </motion.header>
+    </>
   );
 }

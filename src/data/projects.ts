@@ -72,6 +72,7 @@ export const projects: Project[] = [
     sector: "Sport & Athleisure",
     group: "Ecommerce",
     role: "Shopify storefront",
+    featured: true,
     ctaLabel: "Store",
   },
   {
@@ -128,21 +129,6 @@ export const projects: Project[] = [
     sector: "Travel & Education",
     group: "Brand",
     role: "Marketing website",
-    ctaLabel: "Website",
-  },
-  {
-    title: "DGX Films",
-    subtitle: "Film Production",
-    description:
-      "Cinematic studio site for presenting projects and creative identity with a dark, image-led layout.",
-    image: "/projects/dgx-films.jpg",
-    technologies: ["Web", "Branding", "UI"],
-    liveUrl: "https://dgxfilms.modernxwebs.com",
-    category: "Media",
-    sector: "Media & Film",
-    group: "Brand",
-    role: "Brand website",
-    featured: true,
     ctaLabel: "Website",
   },
   {
@@ -229,6 +215,20 @@ export const projects: Project[] = [
     group: "Brand",
     role: "Brand website",
     featured: true,
+    ctaLabel: "Website",
+  },
+  {
+    title: "Studio Real Estate",
+    subtitle: "Real Estate & Architecture",
+    description:
+      "Studio site offering premium websites for developers, architects, and real-estate brands, from strategy and design to SEO and launch.",
+    image: "/projects/real-estate-portfolio.jpg",
+    technologies: ["Web", "Branding", "Real estate"],
+    liveUrl: "https://vivektripathi9.github.io/Real_estate_Portfolio/",
+    category: "Real Estate",
+    sector: "Real Estate & Development",
+    group: "Brand",
+    role: "Brand website",
     ctaLabel: "Website",
   },
   {

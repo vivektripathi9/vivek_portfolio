@@ -1,198 +1,161 @@
 "use client";
 
 import {
-  AnimatePresence,
   motion,
-  useInView,
-  useReducedMotion,
+  useMotionValue,
+  useScroll,
   useSpring,
+  useTransform,
+  type MotionValue,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { useRef, type MouseEvent } from "react";
 
-import { Reveal } from "@/components/motion/Reveal";
+import { TextReveal } from "@/components/motion/TextReveal";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { Typography } from "@/components/ui/Typography";
+import { MultiplayerCursor, SelectionFrame } from "@/components/ui/Figma";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { siteConfig } from "@/data/site";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useIntroDone } from "@/hooks/useIntroDone";
 
-function parseStatValue(value: string) {
-  const match = value.match(/^(\d+)(.*)$/);
-  if (!match) return { target: null as number | null, suffix: value };
-  return { target: Number(match[1]), suffix: match[2] ?? "" };
-}
+const frames = [
+  { name: "tryBello", image: "/projects/trybello.jpg", className: "left-[3%] top-[14%] w-[17vw]", depth: -22, scroll: -90, rotate: -4 },
+  { name: "Stratus", image: "/projects/stratus.jpg", className: "right-[3%] top-[14%] w-[17vw]", depth: 26, scroll: -130, rotate: 4 },
+  { name: "Tula Projects", image: "/projects/tulaprojects.jpg", className: "bottom-[7%] left-[4%] w-[15vw]", depth: 16, scroll: -200, rotate: 3 },
+  { name: "NATUF", image: "/projects/natuf.jpg", className: "bottom-[7%] right-[4%] w-[15vw]", depth: -16, scroll: -240, rotate: -3, selected: true },
+];
 
-function AnimatedStat({
-  value,
-  label,
-  delay = 0,
+function FloatingFrame({
+  frame,
+  index,
+  pointerX,
+  pointerY,
+  scroll,
+  play,
 }: {
-  value: string;
-  label: string;
-  delay?: number;
+  frame: (typeof frames)[number];
+  index: number;
+  pointerX: MotionValue<number>;
+  pointerY: MotionValue<number>;
+  scroll: MotionValue<number>;
+  play: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-  const inView = useInView(ref, { once: true, amount: 0.4 });
-  const { target, suffix } = parseStatValue(value);
-  const spring = useSpring(0, { stiffness: 70, damping: 22, mass: 0.8 });
-  const [display, setDisplay] = useState(reduceMotion && target !== null ? target : 0);
-
-  useEffect(() => {
-    if (target === null) return;
-    if (reduceMotion) {
-      setDisplay(target);
-      return;
-    }
-    if (inView) {
-      const timeout = window.setTimeout(() => spring.set(target), delay * 1000);
-      return () => window.clearTimeout(timeout);
-    }
-  }, [delay, inView, reduceMotion, spring, target]);
-
-  useEffect(() => {
-    if (reduceMotion || target === null) return;
-    return spring.on("change", (latest) => {
-      setDisplay(Math.round(latest));
-    });
-  }, [reduceMotion, spring, target]);
+  const reduceMotion = useHydratedReducedMotion();
+  const x = useTransform(pointerX, [-0.5, 0.5], [-frame.depth, frame.depth]);
+  const pointerOffsetY = useTransform(pointerY, [-0.5, 0.5], [-frame.depth, frame.depth]);
+  const y = useTransform(
+    [pointerOffsetY, scroll],
+    ([pointer, progress]) => (pointer as number) + (progress as number) * frame.scroll,
+  );
 
   return (
-    <motion.div
-      ref={ref}
-      className="text-center"
-      initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-      whileInView={reduceMotion ? {} : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <p
-        className="mb-1.5 text-2xl font-black tabular-nums text-[#9e8857] sm:text-4xl lg:text-5xl"
-        aria-label={`${value} ${label}`}
+    <motion.div className={`absolute ${frame.className}`} style={reduceMotion ? undefined : { x, y }}>
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, scale: 0.8, rotate: frame.rotate * 3, y: 80 }}
+        animate={play ? { opacity: 1, scale: 1, rotate: frame.rotate, y: 0 } : undefined}
+        transition={{ duration: 1.4, delay: 0.25 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
       >
-        {target === null ? suffix : `${display}${suffix}`}
-      </p>
-      <p className="type-body-sm mx-auto max-w-[6.5rem] text-[0.7rem] leading-snug text-black/80 sm:max-w-[9rem] sm:text-[0.875rem]">
-        {label}
-      </p>
+        <SelectionFrame label={frame.selected ? `Frame / ${frame.name}` : undefined} active={Boolean(frame.selected)}>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[3px] shadow-[0_40px_90px_rgba(0,0,0,0.65)]">
+            <Image src={frame.image} alt="" fill preload className="object-cover object-top" sizes="18vw" />
+          </div>
+        </SelectionFrame>
+      </motion.div>
     </motion.div>
   );
 }
 
 export function Hero() {
-  const [roleIndex, setRoleIndex] = useState(0);
-  const reduceMotion = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+  const play = useIntroDone();
+  const reduceMotion = useHydratedReducedMotion();
+  const pointerX = useSpring(useMotionValue(0), { stiffness: 60, damping: 18 });
+  const pointerY = useSpring(useMotionValue(0), { stiffness: 60, damping: 18 });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const contentOpacity = useTransform(scrollYProgress, [0.35, 0.9], [1, 0]);
 
-  useEffect(() => {
-    if (reduceMotion) return;
-    const timer = window.setInterval(() => {
-      setRoleIndex((current) => (current + 1) % siteConfig.rotatingRoles.length);
-    }, 2200);
-    return () => window.clearInterval(timer);
-  }, [reduceMotion]);
+  function onMove(event: MouseEvent<HTMLElement>) {
+    pointerX.set(event.clientX / window.innerWidth - 0.5);
+    pointerY.set(event.clientY / window.innerHeight - 0.5);
+  }
 
   return (
-    <section id="home" className="relative min-h-[100svh] pb-14 pt-6 sm:pb-16 sm:pt-8 md:pb-20 md:pt-12">
-      <Container>
-        <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-12 lg:gap-10 xl:gap-14">
-          <div className="space-y-5 sm:space-y-6 lg:col-span-7 xl:col-span-8">
-            <Reveal>
-              <p className="text-base font-light text-black/90 md:text-lg">
-                {siteConfig.heroIntro}
-              </p>
-              <Typography
-                as="h1"
-                variant="display-lg"
-                className="overflow-hidden text-black"
-              >
-                <span className="sr-only">{siteConfig.firstName}</span>
-                <span aria-hidden="true" className="inline-flex">
-                  {siteConfig.firstName.split("").map((letter, index) => (
-                    <motion.span
-                      key={`${letter}-${index}`}
-                      className="inline-block"
-                      initial={reduceMotion ? false : { y: "110%" }}
-                      animate={{ y: "0%" }}
-                      transition={{
-                        duration: 0.72,
-                        delay: 0.08 + index * 0.055,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                    >
-                      {letter}
-                    </motion.span>
-                  ))}
-                </span>
-              </Typography>
-              <div className="relative h-[1.5rem] overflow-hidden sm:h-[1.75rem]">
-                <AnimatePresence mode="wait">
-                  <motion.p
-                    key={siteConfig.rotatingRoles[roleIndex]}
-                    initial={reduceMotion ? false : { y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={reduceMotion ? undefined : { y: -16, opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="absolute inset-0 text-sm font-semibold uppercase tracking-[0.28em] text-[#9e8857] sm:text-base"
-                  >
-                    {siteConfig.rotatingRoles[roleIndex]}
-                  </motion.p>
-                </AnimatePresence>
-              </div>
-            </Reveal>
+    <section
+      id="home"
+      ref={ref}
+      onMouseMove={onMove}
+      className="canvas-dots relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-10 pt-28"
+    >
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <span className="aurora-blob -left-[10%] top-[8%] h-[52rem] w-[52rem] [--blob:rgba(122,95,42,0.5)]" />
+        <span className="aurora-blob right-[2%] top-[30%] h-[46rem] w-[46rem] [--blob:rgba(63,58,120,0.45)] [animation-delay:-7s]" />
+        <span className="aurora-blob bottom-[-20%] left-[35%] h-[40rem] w-[60rem] [--blob:rgba(227,194,133,0.16)] [animation-delay:-12s]" />
+      </div>
 
-            <Reveal delay={0.08}>
-              <p className="type-body-md max-w-xl text-black/80">
-                {siteConfig.heroBio}
-              </p>
-            </Reveal>
+      <div className="absolute inset-0 hidden lg:block">
+        {frames.map((frame, index) => (
+          <FloatingFrame
+            key={frame.name}
+            frame={frame}
+            index={index}
+            pointerX={pointerX}
+            pointerY={pointerY}
+            scroll={scrollYProgress}
+            play={play}
+          />
+        ))}
+        <MultiplayerCursor
+          name="Vivek"
+          color="#e3c285"
+          className="left-[14%] top-[44%]"
+          path={{ x: ["0vw", "4vw", "-6vw", "2vw"], y: ["0vh", "-8vh", "4vh", "10vh"] }}
+        />
+        <MultiplayerCursor
+          name="You"
+          color="#a5b4fc"
+          className="left-[80%] top-[48%]"
+          duration={18}
+          path={{ x: ["0vw", "6vw", "-3vw", "4vw"], y: ["0vh", "-10vh", "6vh", "-4vh"] }}
+        />
+      </div>
 
-            <Reveal delay={0.14}>
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <Button href={siteConfig.hireUrl}>Hire Me</Button>
-                <Button href={siteConfig.whatsappUrl} variant="whatsapp">
-                  <WhatsAppIcon />
-                  WhatsApp
-                </Button>
-                <Button href={siteConfig.projectsHref} variant="outline">
-                  See work
-                </Button>
-              </div>
-            </Reveal>
-          </div>
-
-          <div className="lg:col-span-5 xl:col-span-4">
-            <div className="grid grid-cols-3 gap-2.5 sm:gap-5 lg:gap-6">
-              {siteConfig.stats.map((stat, index) => (
-                <AnimatedStat
-                  key={stat.label}
-                  value={stat.value}
-                  label={stat.label}
-                  delay={0.08 + index * 0.12}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-10 flex justify-center sm:mt-12 lg:mt-16">
-          <motion.a
-            href="#about"
-            className="flex flex-col items-center gap-3 type-nav text-[#9e8857] transition hover:text-black"
-            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      <motion.div className="relative z-20" style={reduceMotion ? undefined : { opacity: contentOpacity }}>
+        <Container className="text-center">
+          <motion.p
+            className="label mb-6 flex items-center justify-center gap-3"
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={play ? { opacity: 1 } : undefined}
+            transition={{ duration: 1, delay: 0.2 }}
           >
-            Scroll
-            <motion.span
-              aria-hidden="true"
-              className="block h-9 w-px bg-current"
-              animate={reduceMotion ? undefined : { scaleY: [0.45, 1, 0.45], opacity: [0.35, 1, 0.35] }}
-              transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
-              style={{ originY: 0 }}
-            />
-          </motion.a>
-        </div>
-      </Container>
+            <span className="pulse-dot h-2 w-2 rounded-full bg-[#78dc96]" />
+            {siteConfig.name} — {siteConfig.title}
+          </motion.p>
+
+          <TextReveal as="h1" className="display-xl !text-[clamp(3.1rem,min(10vw,18vh),11rem)]" text={siteConfig.heroHeadline} play={play} stagger={0.07} />
+
+          <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-md lg:hidden">
+            <Image src="/projects/natuf.jpg" alt="" fill className="object-cover object-top" sizes="100vw" />
+          </div>
+
+          <motion.div
+            className="mx-auto mt-8 flex max-w-2xl flex-col items-center gap-6 lg:mt-10"
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            animate={play ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 1, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className="body-lg">{siteConfig.heroBio}</p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button href={siteConfig.projectsHref}>See the work</Button>
+              <Button href={siteConfig.whatsappUrl} variant="outline">
+                <WhatsAppIcon className="h-4 w-4" />
+                WhatsApp
+              </Button>
+            </div>
+          </motion.div>
+        </Container>
+      </motion.div>
     </section>
   );
 }

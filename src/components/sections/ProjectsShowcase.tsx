@@ -1,203 +1,193 @@
 "use client";
 
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
-import { useMemo, useState } from "react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { useMemo, useState, type MouseEvent } from "react";
 
-import { PageEnter } from "@/components/motion/PageEnter";
-import { Reveal } from "@/components/motion/Reveal";
-import { BeyondBuilds } from "@/components/sections/BeyondBuilds";
+import { TextReveal } from "@/components/motion/TextReveal";
+import { VelocityMarquee } from "@/components/motion/VelocityMarquee";
 import { Container } from "@/components/ui/Container";
 import { ProjectCard } from "@/components/ui/ProjectCard";
-import { Typography } from "@/components/ui/Typography";
-import { projectGroups, projects } from "@/data/projects";
+import { projectGroups, projects, type Project } from "@/data/projects";
+import { siteConfig } from "@/data/site";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const marqueeItems = [
-  "Shopify",
-  "Fashion",
-  "Beauty",
-  "Athleisure",
-  "Food",
-  "Travel",
-  "Media",
-  "SaaS",
-  "Performance",
-  "Merchandising",
+/** Editorial rhythm: alternating wide and narrow columns on a 12-col grid. */
+const gridSpans = [
+  "md:col-span-7",
+  "md:col-span-5 md:mt-32",
+  "md:col-span-5",
+  "md:col-span-7 md:mt-20",
 ];
 
-function AnimatedTitle() {
-  const reduceMotion = useReducedMotion();
-  const letters = "All Projects".split("");
+function ProjectList({ items }: { items: Project[] }) {
+  const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
+  const [hovered, setHovered] = useState<Project | null>(null);
+  const x = useSpring(useMotionValue(0), { stiffness: 180, damping: 24 });
+  const y = useSpring(useMotionValue(0), { stiffness: 180, damping: 24 });
+
+  function onMove(event: MouseEvent) {
+    x.set(event.clientX);
+    y.set(event.clientY);
+  }
 
   return (
-    <h1
-      aria-label="All Projects"
-      className="type-eyebrow !mb-0 inline-block overflow-hidden bg-[rgba(158,104,87,0.1)] p-2"
-    >
-      {letters.map((letter, index) => (
-        <motion.span
-          key={`${letter}-${index}`}
-          className="inline-block"
-          initial={reduceMotion ? false : { y: "0.7em", opacity: 0 }}
-          animate={{ y: "0em", opacity: 1 }}
-          transition={{
-            duration: 0.55,
-            delay: 0.03 * index,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        >
-          {letter === " " ? "\u00A0" : letter}
-        </motion.span>
-      ))}
-    </h1>
-  );
-}
-
-function IndustryMarquee() {
-  const reduceMotion = useReducedMotion();
-  const row = [...marqueeItems, ...marqueeItems];
-
-  return (
-    <div className="overflow-hidden border-y border-black/10 py-3">
-      <motion.div
-        className="flex w-max gap-8 pr-8"
-        animate={reduceMotion ? undefined : { x: ["0%", "-50%"] }}
-        transition={{ duration: 32, ease: "linear", repeat: Infinity }}
-      >
-        {row.map((item, index) => (
-          <span
-            key={`${item}-${index}`}
-            className="type-caption shrink-0 uppercase tracking-[0.22em] text-black/40"
-          >
-            {item}
-            <span className="mx-8 text-[#9e8857]">✦</span>
-          </span>
+    <div onMouseMove={onMove} onMouseLeave={() => setHovered(null)}>
+      <ul className="border-b border-line">
+        {items.map((project, index) => (
+          <li key={project.title} className="border-t border-line">
+            <Link
+              href={project.liveUrl ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              onMouseEnter={() => setHovered(project)}
+              className="group grid items-baseline gap-2 py-5 transition-colors md:grid-cols-12 md:gap-6 md:py-7"
+            >
+              <span className="label md:col-span-1">{String(index + 1).padStart(2, "0")}</span>
+              <span className="display-md transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-3 group-hover:!text-accent md:col-span-7">
+                {project.title}
+              </span>
+              <span className="body-sm md:col-span-2">{project.subtitle}</span>
+              <span className="label md:col-span-2 md:text-right">{project.role}</span>
+            </Link>
+          </li>
         ))}
-      </motion.div>
+      </ul>
+
+      {finePointer ? (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none fixed left-0 top-0 z-30 w-[24rem]"
+          style={{ x, y, translateX: "-50%", translateY: "-50%" }}
+        >
+          <AnimatePresence>
+            {hovered ? (
+              <motion.div
+                key={hovered.title}
+                className="absolute inset-x-0 top-0 aspect-[4/3] overflow-hidden rounded-md shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
+                initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.92 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Image src={hovered.image} alt="" fill className="object-cover object-top" sizes="24rem" />
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </motion.div>
+      ) : null}
     </div>
   );
 }
 
 export function ProjectsShowcase() {
   const [activeGroup, setActiveGroup] = useState<(typeof projectGroups)[number]>("All");
-  const reduceMotion = useReducedMotion();
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const reduceMotion = useHydratedReducedMotion();
 
   const visibleProjects = useMemo(
-    () =>
-      activeGroup === "All"
-        ? projects.map((project, index) => ({ project, index }))
-        : projects
-            .map((project, index) => ({ project, index }))
-            .filter(({ project }) => project.group === activeGroup),
+    () => projects.filter((project) => activeGroup === "All" || project.group === activeGroup),
     [activeGroup],
   );
 
-  const browsingLabel =
-    activeGroup === "All"
-      ? "A living archive of storefronts, launches, and brand sites."
-      : `Work across ${activeGroup.toLowerCase()} — filter the collection.`;
-
   return (
-    <PageEnter>
-    <section className="section-padding pt-10 md:pt-14">
-      <Container className="space-y-10 md:space-y-14">
-        <div className="space-y-8">
-          <div className="max-w-3xl space-y-5">
-            <AnimatedTitle />
-            <motion.div
-              aria-hidden="true"
-              className="h-px origin-left bg-[#9e8857]"
-              initial={reduceMotion ? false : { scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            />
-            <motion.div
-              className="space-y-4"
-              initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.28 }}
-            >
-              <Typography variant="body-lg" className="text-black/80">
-                Shopify storefronts and brand websites I have helped ship — fashion
-                and beauty, food, film, architecture, and product.
-              </Typography>
-              <Typography variant="body-md" className="max-w-2xl text-black/65">
-                Each build is a different brief: some needed a full storefront with
-                a strong first impression, others needed quieter work — faster pages,
-                clearer collections, and interfaces that make the product easier to
-                trust. Scroll the work, or jump by type.
-              </Typography>
-            </motion.div>
-          </div>
-        </div>
+    <>
+      <section className="canvas-dots pb-12 pt-36 md:pb-20 md:pt-48">
+        <Container className="text-center">
+          <p className="label mb-6">{projects.length} live websites</p>
+          <TextReveal as="h1" className="display-xl" text={"Work that\n*ships.*"} stagger={0.08} />
+          <p className="body-lg mx-auto mt-8 max-w-2xl">
+            Shopify storefronts and brand websites I have helped ship — fashion and beauty, food,
+            architecture, and product.
+          </p>
+        </Container>
+      </section>
 
-        <IndustryMarquee />
+      <VelocityMarquee items={siteConfig.marquee} speed={2} />
 
-        <div className="space-y-4">
-          <LayoutGroup>
-            <motion.div
-              className="flex flex-wrap gap-2"
-              initial={reduceMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.45, delay: 0.2 }}
-            >
-              {projectGroups.map((group) => {
-                const isActive = group === activeGroup;
-                return (
-                  <button
-                    key={group}
-                    type="button"
-                    onClick={() => setActiveGroup(group)}
-                    aria-pressed={isActive}
-                    className="relative border border-black/20 px-3 py-1.5 text-[0.65rem] uppercase tracking-[0.12em] text-black/60 transition hover:border-black/50 hover:text-black"
-                  >
-                    {isActive ? (
-                      <motion.span
-                        layoutId="project-filter-pill"
-                        className="absolute inset-0 bg-black"
-                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      />
-                    ) : null}
-                    <span
-                      className={`relative z-[1] ${isActive ? "text-white" : ""}`}
+      <section className="section-padding !pt-12">
+        <Container className="space-y-12 md:space-y-16">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <LayoutGroup id="project-filter">
+              <div className="flex flex-wrap gap-1 rounded-full border border-line p-1">
+                {projectGroups.map((group) => {
+                  const isActive = group === activeGroup;
+                  return (
+                    <button
+                      key={group}
+                      type="button"
+                      onClick={() => setActiveGroup(group)}
+                      aria-pressed={isActive}
+                      className={`relative rounded-full px-4 py-2 text-sm transition-colors duration-300 ${isActive ? "text-on-accent" : "text-muted hover:text-foreground"}`}
                     >
-                      {group}
-                    </span>
-                  </button>
-                );
-              })}
-            </motion.div>
-          </LayoutGroup>
-          <p className="type-caption text-black/45">{browsingLabel}</p>
-        </div>
+                      {isActive ? (
+                        <motion.span
+                          layoutId="project-filter-pill"
+                          className="absolute inset-0 rounded-full bg-accent"
+                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                        />
+                      ) : null}
+                      <span className="relative">{group}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </LayoutGroup>
 
-        <motion.div
-          layout
-          className="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-16"
-        >
-          <AnimatePresence mode="popLayout">
-            {visibleProjects.map(({ project, index }) => (
-              <motion.div
-                key={project.title}
-                layout
-                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduceMotion ? undefined : { opacity: 0, y: 16 }}
-                transition={{ duration: 0.4, delay: Math.min(index * 0.03, 0.2) }}
-                className="h-full"
-              >
-                <ProjectCard project={project} index={index} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+            <div className="flex gap-1 rounded-full border border-line p-1" role="group" aria-label="Layout">
+              {(["grid", "list"] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setView(option)}
+                  aria-pressed={view === option}
+                  className={`rounded-full px-4 py-2 text-sm capitalize transition-colors duration-300 ${view === option ? "bg-foreground text-background" : "text-muted hover:text-foreground"}`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        {activeGroup === "All" ? (
-          <Reveal delay={0.08}>
-            <BeyondBuilds />
-          </Reveal>
-        ) : null}
-      </Container>
-    </section>
-    </PageEnter>
+          {view === "list" ? (
+            <ProjectList items={visibleProjects} />
+          ) : (
+            <div className="grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-12 md:gap-y-24">
+              <AnimatePresence mode="popLayout">
+                {visibleProjects.map((project, index) => (
+                  <motion.div
+                    key={project.title}
+                    layout={!reduceMotion}
+                    exit={reduceMotion ? undefined : { opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className={gridSpans[index % gridSpans.length]}
+                  >
+                    <ProjectCard project={project} index={index} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+
+          <div className="grid gap-5 border-t border-line pt-10 md:grid-cols-2 md:gap-16">
+            <h2 className="display-md">
+              Beyond the <em>full builds</em>
+            </h2>
+            <p className="body-lg">
+              I&apos;ve also partnered with other Shopify brands on critical features, performance work, and
+              targeted UI refinements — without a full rebuild.
+            </p>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }

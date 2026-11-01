@@ -1,126 +1,115 @@
 "use client";
 
+import { motion, useInView, useScroll, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { Reveal } from "@/components/motion/Reveal";
+import { ClipReveal, Reveal } from "@/components/motion/Reveal";
+import { ScrollWords } from "@/components/motion/ScrollWords";
+import { TextReveal } from "@/components/motion/TextReveal";
 import { Container } from "@/components/ui/Container";
-import { Typography } from "@/components/ui/Typography";
+import { Spotlight } from "@/components/ui/Spotlight";
 import { siteConfig } from "@/data/site";
+import { skills } from "@/data/skills";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
-function Gold({ children }: { children: ReactNode }) {
-  return <span className="font-semibold text-[#7a683f]">{children}</span>;
-}
+const categories = ["Languages", "Frameworks", "Tools"] as const;
 
-function AboutPortrait() {
+function Stat({ value, label }: { value: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 90%", "start 35%"],
-  });
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 28,
-    restDelta: 0.001,
-  });
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const reduceMotion = useHydratedReducedMotion();
+  const match = value.match(/^(\d+)(.*)$/);
+  const target = Number(match?.[1] ?? 0);
+  const suffix = match?.[2] ?? "";
+  const spring = useSpring(0, { stiffness: 45, damping: 18 });
+  const [display, setDisplay] = useState(0);
 
-  const top = useTransform(progress, [0, 0.3], [0, 1]);
-  const right = useTransform(progress, [0.2, 0.55], [0, 1]);
-  const bottom = useTransform(progress, [0.45, 0.75], [0, 1]);
-  const left = useTransform(progress, [0.65, 1], [0, 1]);
-  const imageReveal = useTransform(progress, [0.15, 0.55], [0, 1]);
-  const imageY = useTransform(progress, [0, 1], [24, 0]);
+  useEffect(() => spring.on("change", (latest) => setDisplay(Math.round(latest))), [spring]);
+  useEffect(() => {
+    if (inView) spring.set(target);
+  }, [inView, spring, target]);
 
   return (
-    <div ref={ref} className="relative mx-auto w-full max-w-[320px] sm:max-w-[360px] lg:mx-0 lg:max-w-[400px]">
-      <div className="relative aspect-square w-full">
-        <div className="absolute inset-[10%] translate-x-3 translate-y-3 sm:translate-x-4 sm:translate-y-4">
-          <motion.span
-            aria-hidden="true"
-            className="absolute left-0 top-0 h-[2px] origin-left bg-[#9e8857]"
-            style={{ width: "100%", scaleX: reduceMotion ? 1 : top }}
-          />
-          <motion.span
-            aria-hidden="true"
-            className="absolute right-0 top-0 w-[2px] origin-top bg-[#9e8857]"
-            style={{ height: "100%", scaleY: reduceMotion ? 1 : right }}
-          />
-          <motion.span
-            aria-hidden="true"
-            className="absolute bottom-0 left-0 h-[2px] origin-right bg-[#9e8857]"
-            style={{ width: "100%", scaleX: reduceMotion ? 1 : bottom }}
-          />
-          <motion.span
-            aria-hidden="true"
-            className="absolute left-0 top-0 w-[2px] origin-bottom bg-[#9e8857]"
-            style={{ height: "100%", scaleY: reduceMotion ? 1 : left }}
-          />
-        </div>
-
-        <motion.div
-          className="relative z-[1] h-full w-full overflow-hidden rounded-md"
-          style={reduceMotion ? undefined : { opacity: imageReveal, y: imageY }}
-        >
-          <Image
-            src={siteConfig.portrait}
-            alt={`${siteConfig.name} portrait`}
-            fill
-            className="object-cover"
-            sizes="(max-width: 1024px) 360px, 400px"
-          />
-        </motion.div>
+    <Spotlight className="flex min-h-48 flex-col justify-between rounded-2xl border border-line p-6">
+      <div ref={ref}>
+        <p className="font-display text-[clamp(3.5rem,6vw,6rem)] leading-none font-medium tracking-[-0.04em] tabular-nums" aria-label={value}>
+          {reduceMotion ? target : display}
+          <span className="text-accent">{suffix}</span>
+        </p>
       </div>
-    </div>
+      <p className="body-sm mt-8">{label}</p>
+    </Spotlight>
   );
 }
 
 export function About() {
+  const portraitRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useHydratedReducedMotion();
+  const { scrollYProgress } = useScroll({ target: portraitRef, offset: ["start end", "end start"] });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+
   return (
-    <section id="about" className="section-padding">
+    <section id="about" className="theme-light relative z-10 rounded-[2rem] section-padding md:rounded-[3rem]">
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-          <AboutPortrait />
-
-          <div className="space-y-6 md:space-y-7">
-            <Reveal>
-              <Typography as="h2" variant="eyebrow">
-                About Me
-              </Typography>
-            </Reveal>
-
-            <Reveal delay={0.08}>
-              <p className="type-body-lg text-black/85">
-                I&apos;m {siteConfig.firstName}. I treat every store like a first impression you
-                only get once. <Gold>Shopify storefronts</Gold>, custom <Gold>front-end</Gold>,
-                and the <Gold>back-end</Gold> that holds it together. Quick on its feet, light on
-                clutter, hard to scroll past.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.14}>
-              <p className="type-body-md text-black/80">
-                I&apos;ve helped new brands get live and known ones get sharper. Sometimes
-                that&apos;s a full build. Sometimes it&apos;s a product page that finally
-                converts. <Gold>Simplicity</Gold> and <Gold>function</Gold> aren&apos;t a mood
-                board. They&apos;re the whole job.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <p className="type-h4 pt-1 text-black">
-                More is <Gold>Less</Gold> and <Gold>Less</Gold> is <Gold>More</Gold>.
-              </p>
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-8">
+            <p className="label mb-8">About</p>
+            <ScrollWords className="display-md" text={siteConfig.about} />
+            <Reveal className="mt-10">
+              <p className="body-lg max-w-2xl">{siteConfig.aboutSecondary}</p>
             </Reveal>
           </div>
+          <div ref={portraitRef} className="lg:sticky lg:top-24 lg:col-span-4 lg:self-start">
+            <ClipReveal className="relative aspect-[4/5] rounded-2xl">
+              <motion.div className="relative -top-[12%] h-[124%] w-full" style={reduceMotion ? undefined : { y: imageY }}>
+                <Image
+                  src={siteConfig.portrait}
+                  alt={`${siteConfig.name} portrait`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 32vw"
+                />
+              </motion.div>
+            </ClipReveal>
+          </div>
         </div>
+
+        <div className="mt-16 grid gap-4 md:mt-24 md:grid-cols-3">
+          {siteConfig.stats.map((stat) => (
+            <Stat key={stat.label} value={stat.value} label={stat.label} />
+          ))}
+        </div>
+
+        <div id="skills" className="mt-24 md:mt-36">
+          <TextReveal className="display-lg" text={"The *toolkit*"} />
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {categories.map((category, index) => (
+              <Reveal key={category} delay={index * 0.08}>
+                <Spotlight className="h-full rounded-2xl border border-line p-6">
+                  <h3 className="label">{category}</h3>
+                  <ul className="mt-6 flex flex-wrap gap-2">
+                    {skills
+                      .filter((skill) => skill.category === category)
+                      .map((skill) => (
+                        <li
+                          key={skill.name}
+                          className="flex items-center gap-2 rounded-full border border-line bg-white/60 py-1.5 pl-2 pr-3.5 text-sm transition-transform duration-300 hover:-translate-y-0.5"
+                        >
+                          <Image src={skill.icon} alt="" width={20} height={20} className="h-5 w-5 object-contain" />
+                          {skill.name}
+                        </li>
+                      ))}
+                  </ul>
+                </Spotlight>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+
+        <p className="display-md mt-24 md:mt-36">
+          More is <em>Less</em> and <em>Less</em> is More.
+        </p>
       </Container>
     </section>
   );

@@ -1,25 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
-
+import { Magnetic } from "@/components/motion/Magnetic";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { siteConfig } from "@/data/site";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 export function WhatsAppFloat() {
-  const reduceMotion = useHydratedReducedMotion();
-
   return (
-    <motion.a
-      href={siteConfig.whatsappUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`Chat on WhatsApp at ${siteConfig.phone}`}
-      className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_8px_24px_rgba(37,211,102,0.45)] hover:bg-[#1ebe57] md:bottom-6 md:right-6"
-      whileHover={reduceMotion ? undefined : { scale: 1.08, y: -2 }}
-      whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-    >
-      <WhatsAppIcon className="h-7 w-7" />
-    </motion.a>
+    <Magnetic className="fixed bottom-5 right-5 z-40 md:bottom-7 md:right-7" strength={0.4}>
+      <a
+        href={siteConfig.whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Chat on WhatsApp at ${siteConfig.phone}`}
+        className="glass flex h-13 w-13 items-center justify-center rounded-full text-[#4ade80] transition-colors hover:text-[#86efac]"
+      >
+        <WhatsAppIcon className="h-6 w-6" />
+      </a>
+    </Magnetic>
   );
 }

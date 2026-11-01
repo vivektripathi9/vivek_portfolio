@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <div className="relative min-h-screen">
-      <SiteHeader wide />
+      <SiteHeader />
       <main id="content">
         <Services />
       </main>

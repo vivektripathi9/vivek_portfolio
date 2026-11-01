@@ -9,8 +9,8 @@ export const siteConfig = {
   hireUrl: "https://wa.me/918195805892",
   projectsHref: "/projects",
   portrait: "/website_asset/profile.jpeg",
-  rotatingRoles: ["Frontend", "Shopify", "Brands"],
-  heroIntro: "Hi, I'm",
+  heroHeadline: "Storefronts\n& brand sites\npeople *remember.*",
+  marquee: ["Shopify", "Fashion", "Beauty", "Food", "Architecture", "Real estate", "SaaS", "Performance"],
   heroBio:
     "A web developer with 4 years of experience building high-performance storefronts and brand websites. I focus on clear interfaces, fast pages, and work that ships.",
   about:
@@ -29,8 +29,10 @@ export const siteConfig = {
   ],
   navLinks: [
     { label: "About", href: "/#about" },
-    { label: "Work", href: "/projects" },
+    { label: "Projects", href: "/projects" },
     { label: "Services", href: "/services" },
+    { label: "Architecture", href: "/architecture" },
+    { label: "Designs", href: "/designs" },
   ],
   socialLinks: [
     { label: "Email", href: "mailto:vvk22992@gmail.com" },
