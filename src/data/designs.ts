@@ -8,6 +8,61 @@ export type Design = {
   figmaUrl?: string;
 };
 
+export type FigmaDesign = {
+  title: string;
+  fileKey: string;
+  fileName: string;
+  poster: string;
+};
+
+export const figmaDesigns: FigmaDesign[] = [
+  { title: "STEP UP", fileKey: "ImUeHM1F0eXAkBBPiddiSM", fileName: "STEP-UP", poster: "/designs/step-up.webp" },
+  { title: "MindNest", fileKey: "m0gVyDXEIpfcvG88oASmFc", fileName: "MindNest", poster: "/designs/mindnest.webp" },
+  { title: "MediPlux", fileKey: "YFem4bRtBnC18oyzXaxq9a", fileName: "MediPlux", poster: "/designs/mediplux.webp" },
+];
+
+export type PageDesign = {
+  title: string;
+  subtitle: string;
+  poster: string;
+  views: {
+    label: string;
+    width: number;
+    images: { src: string; height: number }[];
+  }[];
+};
+
+/** Rendered from the canvas artboards: Claude canvases cannot be embedded on other sites. */
+export const pageDesigns: PageDesign[] = [
+  {
+    title: "SIDHM",
+    subtitle: "Homepage concept",
+    poster: "/designs/sidhm/desktop-1.jpg",
+    views: [
+      {
+        label: "Desktop",
+        width: 1440,
+        images: [
+          { src: "/designs/sidhm/desktop-1.jpg", height: 5582 },
+          { src: "/designs/sidhm/desktop-2.jpg", height: 4763 },
+        ],
+      },
+      {
+        label: "Phone",
+        width: 390,
+        images: [
+          { src: "/designs/sidhm/phone-1.jpg", height: 4893 },
+          { src: "/designs/sidhm/phone-2.jpg", height: 3678 },
+        ],
+      },
+    ],
+  },
+];
+
+export function figmaEmbedUrl(design: FigmaDesign) {
+  return `https://embed.figma.com/design/${design.fileKey}/${design.fileName}?node-id=0-1&embed-host=vivek-portfolio&footer=false&theme=dark`;
+}
+
 export const designGroups = ["All", "Landing pages", "Mobile apps", "3D"] as const;
 
 /** Third-party projects from https://github.com/topics/modern-ui-ux. Always credit the author. */
