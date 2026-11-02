@@ -39,14 +39,7 @@ export const pageDesigns: PageDesign[] = [
     subtitle: "Homepage concept",
     poster: "/designs/sidhm/desktop-1.jpg",
     views: [
-      {
-        label: "Desktop",
-        width: 1440,
-        images: [
-          { src: "/designs/sidhm/desktop-1.jpg", height: 5582 },
-          { src: "/designs/sidhm/desktop-2.jpg", height: 4763 },
-        ],
-      },
+      sidhmDesktop,
       {
         label: "Phone",
         width: 390,
@@ -66,6 +59,15 @@ export function figmaEmbedUrl(design: FigmaDesign) {
 export const designGroups = ["All", "Landing pages", "Mobile apps", "3D"] as const;
 
 /** Third-party projects from https://github.com/topics/modern-ui-ux. Always credit the author. */
+export const sidhmDesktop: DesignView = {
+  label: "Desktop",
+  width: 1440,
+  images: [
+    { src: "/designs/sidhm/desktop-1.jpg", height: 5582 },
+    { src: "/designs/sidhm/desktop-2.jpg", height: 4763 },
+  ],
+};
+
 export const designs: Design[] = [
   {
     title: "Brainwave",
