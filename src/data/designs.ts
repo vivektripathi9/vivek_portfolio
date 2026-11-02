@@ -15,24 +15,35 @@ export type FigmaDesign = {
   poster: string;
 };
 
+export type DesignView = {
+  label: string;
+  width: number;
+  images: { src: string; height: number }[];
+};
+
+export type PageDesign = {
+  title: string;
+  subtitle: string;
+  poster: string;
+  views: DesignView[];
+};
+
 export const figmaDesigns: FigmaDesign[] = [
   { title: "STEP UP", fileKey: "ImUeHM1F0eXAkBBPiddiSM", fileName: "STEP-UP", poster: "/designs/step-up.webp" },
   { title: "MindNest", fileKey: "m0gVyDXEIpfcvG88oASmFc", fileName: "MindNest", poster: "/designs/mindnest.webp" },
   { title: "MediPlux", fileKey: "YFem4bRtBnC18oyzXaxq9a", fileName: "MediPlux", poster: "/designs/mediplux.webp" },
 ];
 
-export type PageDesign = {
-  title: string;
-  subtitle: string;
-  poster: string;
-  views: {
-    label: string;
-    width: number;
-    images: { src: string; height: number }[];
-  }[];
+/** Rendered from the canvas artboards: Claude canvases cannot be embedded on other sites. */
+export const sidhmDesktop: DesignView = {
+  label: "Desktop",
+  width: 1440,
+  images: [
+    { src: "/designs/sidhm/desktop-1.jpg", height: 5582 },
+    { src: "/designs/sidhm/desktop-2.jpg", height: 4763 },
+  ],
 };
 
-/** Rendered from the canvas artboards: Claude canvases cannot be embedded on other sites. */
 export const pageDesigns: PageDesign[] = [
   {
     title: "SIDHM",
@@ -59,15 +70,6 @@ export function figmaEmbedUrl(design: FigmaDesign) {
 export const designGroups = ["All", "Landing pages", "Mobile apps", "3D"] as const;
 
 /** Third-party projects from https://github.com/topics/modern-ui-ux. Always credit the author. */
-export const sidhmDesktop: DesignView = {
-  label: "Desktop",
-  width: 1440,
-  images: [
-    { src: "/designs/sidhm/desktop-1.jpg", height: 5582 },
-    { src: "/designs/sidhm/desktop-2.jpg", height: 4763 },
-  ],
-};
-
 export const designs: Design[] = [
   {
     title: "Brainwave",

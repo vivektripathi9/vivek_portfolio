@@ -1,6 +1,5 @@
 export const siteConfig = {
   name: "Vivek Tripathi",
-  firstName: "Vivek",
   title: "Web Developer",
   siteUrl: "https://vivektripathi.dev",
   email: "vvk22992@gmail.com",
@@ -17,7 +16,6 @@ export const siteConfig = {
     "I'm Vivek. I treat every store like a first impression you only get once. Shopify storefronts, custom front-end, and the back-end that holds it together. Quick on its feet, light on clutter, hard to scroll past.",
   aboutSecondary:
     "I've helped new brands get live and known ones get sharper. Sometimes that's a full build. Sometimes it's a product page that finally converts. Simplicity and function aren't a mood board. They're the whole job.",
-  philosophy: "More is Less and Less is More.",
   taglinePrimary: "Your idea doesn't need to be perfect",
   taglineSecondary: "It needs to be real",
   contactIntro:
@@ -33,8 +31,5 @@ export const siteConfig = {
     { label: "Services", href: "/services" },
     { label: "Architecture", href: "/architecture" },
     { label: "Designs", href: "/designs" },
-  ],
-  socialLinks: [
-    { label: "Email", href: "mailto:vvk22992@gmail.com" },
   ],
 } as const;
